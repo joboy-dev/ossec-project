@@ -179,7 +179,7 @@ To replicate OSSEC setup on another server:
 - [x] OSSEC installed and configured as a **server**
 - [x] Daemons like `ossec-logcollector`, `ossec-maild`, etc., running
 - [x] Email & active response setup
-- [x] Passwordless sudo for `/var/ossec/bin/ossec-control`
+- [x] Passwordless sudo for `/var/ossec/bin/ossec-control` and other necessary scripts
 - [x] `ossec.conf` monitoring desired logs
 - [x] `manage_agents` ready to connect with remote agents
 
