@@ -303,15 +303,18 @@ async def login(
     return context
 
 
-@auth_router.post('/logout', status_code=200, response_model=success_response)
-async def logout(db: Session=Depends(get_db), current_user: User=Depends(AuthService.get_current_user)):
+@auth_router.post('/logout')
+async def logout(request: Request, db: Session=Depends(get_db)):
     """Endpoint to log a user out
 
     Args:
         db (Session, optional): _description_. Defaults to Depends(get_db).
     """
     
+    current_user = request.state.current_user
+    
     AuthService.logout(db, current_user.id)
+    request.state.current_user = None
     
     response = RedirectResponse(url="/auth/login", status_code=303)
     
@@ -320,7 +323,6 @@ async def logout(db: Session=Depends(get_db), current_user: User=Depends(AuthSer
     response.delete_cookie('access_token')
     
     return response
-
 
 
 # @auth_router.post('/magic', status_code=200, response_model=success_response)

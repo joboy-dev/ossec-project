@@ -8,7 +8,7 @@ from fastapi.responses import RedirectResponse
 def inject_context(request: Request):
     return {
         "request": request,
-        "app_name": "OSSEC System",
+        "app_name": "Vexis- An OSSEC Monitoring System",
         "app_version": "1.0.0",
         "footer_message": "OSSEC System",
         "year": dt.datetime.now().year

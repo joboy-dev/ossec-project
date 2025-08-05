@@ -1,18 +1,13 @@
 import pathlib
 import re, os, socket, json
 from datetime import datetime
+import subprocess
 import sys
 
 ROOT_DIR = pathlib.Path(__file__).parent.parent
 
 # ADD PROJECT ROOT TO IMPORT SEARCH SCOPE
 sys.path.append(str(ROOT_DIR))
-
-# from api.db.database import get_db_with_ctx_manager
-# from api.v1.models.alert import Alert
-# from api.v1.services.ossec import ossec_service
-
-
 BASE_DIR = f"logs/ossec-alerts/{datetime.now().strftime('%Y-%m-%d')}"
 os.makedirs(BASE_DIR, exist_ok=True)
 
@@ -139,29 +134,8 @@ with open(OUTPUT_FILE, "w") as f:
 
 print(f"✅ Alerts saved to {OUTPUT_FILE}")
 
-# with get_db_with_ctx_manager() as db:
-#     existing_ids = set(
-#         row[0] for row in db.query(Alert.unique_id).filter(
-#             Alert.unique_id.in_([a.get("alert_id") for a in alerts if a.get("alert_id")])
-#         ).all()
-#     )
-#     alerts = [a for a in alerts if a.get("alert_id") not in existing_ids]
-    
-#     for alert in alerts:
-#         Alert.create(
-#             db=db,
-#             unique_id=alert.get("alert_id"),
-#             rule_id=alert.get("rule_id"),
-#             level=alert.get("level"),
-#             level_meaning=alert.get("level_meaning"),
-#             level_text=ossec_service.get_ossec_level_text(alert.get("level")),
-#             description=alert.get("description"),
-#             user=alert.get("user"),
-#             timestamp=alert.get("timestamp"),
-#             hostname=alert.get("hostname"),
-#             device_ip=alert.get("device_ip"),
-#             log_file_path=alert.get("log_file_path"),
-#             log=alert.get("log"),
-#         )
-
-# print(f"✅ Alerts saved to database")
+# result = subprocess.run(
+#     ["python3", f"{ROOT_DIR}/scripts/load_alerts_into_db.py"], 
+#     capture_output=True, text=True
+# )
+# print(result.stdout)

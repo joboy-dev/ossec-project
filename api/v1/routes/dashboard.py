@@ -50,6 +50,7 @@ async def dashboard(request: Request, db: Session=Depends(get_db)):
         "system_resource_usage": system_resource_usage,
         "recent_alerts": alerts
     }
+    
 
 @dashboard_router.post("/start-ossec")
 async def start_ossec(request: Request, db: Session=Depends(get_db)):
@@ -139,4 +140,38 @@ async def processes(
         page=page,
         size=per_page,
         total=total_processes,
+    )
+    
+
+@dashboard_router.get('/users')
+@add_template_context('pages/dashboard/users.html')
+async def users(
+    request: Request, 
+    page: int = 1,
+    per_page: int = 10,
+    username: str = None,
+    status: str = None,
+    db: Session=Depends(get_db),
+):
+    query, users, count = User.fetch_by_field(
+        db=db, 
+        page=page,
+        per_page=per_page,
+        sort_by='created_at',
+        search_fields={
+            'username': username if username != "" else None,
+        },
+        is_active=status == 'active' if status else None
+    )
+    
+    query = query.filter(User.id != request.state.current_user.id)
+    count = query.count()
+    users = query.all()
+    
+    return paginator.build_paginated_response(
+        items=[user.to_dict() for user in users],
+        endpoint='/dashboard/users',
+        page=page,
+        size=per_page,
+        total=count,
     )

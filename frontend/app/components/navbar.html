@@ -4,9 +4,25 @@
 
         <!-- Desktop Nav -->
         <div class="hidden md:flex items-center gap-6 ml-8 flex-1 justify-end">
-            <a href="/" class="text-secondary-100 {% if page == 'index' %} active {% endif %}">Home</a>
-            <a href="#" class="text-secondary-100 {% if page == 'docs' %} active {% endif %}">Documentation</a>
-            <a href="{{ url_for('login') }}" class="btn bg-transparent text-primary border border-primary">Admin Login</a>
+            {% if request.state.current_user %}
+            <a href="{{ url_for('dashboard') }}"
+               class="btn bg-transparent text-primary border border-primary">
+                Dashboard
+            </a>
+            {% else %}
+            <a href="/"
+               class="text-secondary-100">
+                Home
+            </a>
+            <a href="#"
+               class="text-secondary-100">
+                Documentation
+            </a>
+            <a href="{{ url_for('login') }}"
+               class="btn bg-transparent text-primary border border-primary">
+                Admin Login
+            </a>
+            {% endif %}
         </div>
 
         <!-- Mobile Hamburger -->
@@ -23,9 +39,25 @@
     <!-- Mobile Nav (moved under logo) -->
     <div class="mobile-nav w-full bg-secondary-900 bg-opacity-95 z-50 flex flex-col items-start justify-start gap-4 hidden md:hidden absolute left-0 top-full">
         <div class="px-[40px] py-[20px] flex flex-col gap-2">
-            <a href="/" class="text-secondary-100 text-lg {% if page == 'index' %} active {% endif %}">Home</a>
-            <a href="#" class="text-secondary-100 text-lg {% if page == 'docs' %} active {% endif %}">Documentation</a>
-            <a href="{{ url_for('login') }}" class="btn bg-transparent text-primary border border-primary text-lg">Admin Login</a>
+            {% if request.state.current_user %}
+            <a href="{{ url_for('dashboard') }}"
+               class="btn bg-transparent text-primary border border-primary">
+                Dashboard
+            </a>
+            {% else %}
+            <a href="/"
+               class="text-secondary-100">
+                Home
+            </a>
+            <a href="#"
+               class="text-secondary-100">
+                Documentation
+            </a>
+            <a href="{{ url_for('login') }}"
+               class="btn bg-transparent text-primary border border-primary">
+                Admin Login
+            </a>
+            {% endif %}
         </div>
     </div>
 </nav>

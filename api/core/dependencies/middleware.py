@@ -136,10 +136,11 @@ class AuthMiddleware(BaseHTTPMiddleware):
         self.unauthenticated_routes = [
             "/", "/auth/login", 
             "/auth/register", "/auth/request-access",
-            # "/dashboard"
         ]
         self.protected_routes = [
-            "/dashboard"
+            "/dashboard", "/dashboard/alerts",
+            "/dashboard/processes", "/dashboard/notifications",
+            "/dashboard/users", "/dashboard/settings",
         ]
 
     async def dispatch(self, request: Request, call_next):

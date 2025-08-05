@@ -48,6 +48,12 @@
                     <i class="fa-solid fa-gear"></i> 
                     Settings
                 </a>
+                <form action="{{ url_for('logout') }}" method="post">
+                    <button type="submit" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> 
+                        Logout
+                    </button>
+                </form>
             </div>
         </div>
     </div>
