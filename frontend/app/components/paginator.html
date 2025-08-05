@@ -1,0 +1,91 @@
+<div id="paginator" aria-label="Pagination" class="flex justify-center mt-6">
+    <ul class="inline-flex items-center space-x-1 max-sm:space-x-0 max-sm:w-full max-sm:justify-between max-sm:px-1">
+        {% if pagination_data.previous_page %}
+        <li>
+            <a href="?page={{ pagination_data.current_page - 1 }}" aria-label="Previous"
+               class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li>
+            <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 cursor-not-allowed max-sm:px-2 max-sm:text-base">&laquo;</span>
+        </li>
+        {% endif %}
+
+        {% if pagination_data.pages <= 10 %}
+            {% for i in range(1, pagination_data.pages + 1) %}
+            <li class="max-sm:hidden sm:inline">
+                <a href="?page={{ i }}"
+                   class="px-3 py-1 rounded-md transition
+                   {% if i == pagination_data.current_page %}
+                       bg-accent-info text-white font-bold
+                   {% else %}
+                       bg-secondary-700 text-secondary-200 hover:bg-secondary-600
+                   {% endif %}
+                   max-sm:px-2 max-sm:text-base">
+                    {{ i }}
+                </a>
+            </li>
+            {% endfor %}
+            <!-- On small screens, show only current page -->
+            <li class="sm:hidden">
+                <span class="px-3 py-1 rounded-md bg-accent-info text-white font-bold max-sm:px-2 max-sm:text-base">
+                    {{ pagination_data.current_page }}
+                </span>
+            </li>
+        {% else %}
+            {% if pagination_data.current_page > 4 %}
+                <li class="max-sm:hidden sm:inline">
+                    <a href="?page=1" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">1</a>
+                </li>
+                <li class="max-sm:hidden sm:inline">
+                    <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
+                </li>
+            {% endif %}
+            {% set start = pagination_data.current_page - 2 if pagination_data.current_page - 2 > 1 else 1 %}
+            {% set end = pagination_data.current_page + 2 if pagination_data.current_page + 2 < pagination_data.pages else pagination_data.pages %}
+            {% for i in range(start, end + 1) %}
+            <li class="max-sm:hidden sm:inline">
+                <a href="?page={{ i }}"
+                   class="px-3 py-1 rounded-md transition
+                   {% if i == pagination_data.current_page %}
+                       bg-accent-info text-white font-bold
+                   {% else %}
+                       bg-secondary-700 text-secondary-200 hover:bg-secondary-600
+                   {% endif %}
+                   max-sm:px-2 max-sm:text-base">
+                    {{ i }}
+                </a>
+            </li>
+            {% endfor %}
+            {% if end < pagination_data.pages %}
+                <li class="max-sm:hidden sm:inline">
+                    <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
+                </li>
+                <li class="max-sm:hidden sm:inline">
+                    <a href="?page={{ pagination_data.pages }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">{{ pagination_data.pages }}</a>
+                </li>
+            {% endif %}
+            <!-- On small screens, show only current page -->
+            <li class="sm:hidden">
+                <span class="px-3 py-1 rounded-md bg-accent-info text-white font-bold max-sm:px-2 max-sm:text-base">
+                    {{ pagination_data.current_page }}
+                </span>
+            </li>
+        {% endif %}
+
+        {% if pagination_data.next_page %}
+        <li>
+            <a href="?page={{ pagination_data.current_page + 1 }}" aria-label="Next"
+               class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li>
+            <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 cursor-not-allowed max-sm:px-2 max-sm:text-base">&raquo;</span>
+        </li>
+        {% endif %}
+    </ul>
+</div>

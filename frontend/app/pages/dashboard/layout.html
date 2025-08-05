@@ -1,0 +1,16 @@
+{% extends "pages/layout.html" %}
+
+{% block modal_content %} {% endblock %}
+
+{% block content %}
+
+<div class="flex h-screen w-screen">
+    {% include "components/sidebar.html" %}
+
+    <div class="flex-1 overflow-y-scroll p-4 bg-secondary-900">
+        {% block dashboard_content %} {% endblock %}
+    </div>
+</div>
+
+{% endblock %}
+

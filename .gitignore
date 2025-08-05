@@ -205,3 +205,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+logs/*
+api/core/dependencies/serviceAccount.json
+api/core/dependencies/firebase_config.py
+
+*.db

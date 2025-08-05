@@ -1,0 +1,251 @@
+{% extends "pages/dashboard/layout.html" %}
+
+{% block modal_content %} 
+    <div id="alert-modal-content">
+        <!-- Modal content will be injected here by JS -->
+    </div>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="w-full py-4 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-fit mb-4">
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-warning text-accent-warning text-2xl"></i>
+                <h1 class="text-secondary-100 font-bold text-2xl">Alert Management</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <form action="/dashboard/alerts" method="get">
+                    <button type="submit" class="flex items-center gap-2 px-3 py-1 bg-transparent text-secondary-200 text-sm transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </form>
+                <form action="/dashboard/sync-alerts" method="post">
+                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded bg-primary text-secondary-900 text-sm font-semibold shadow hover:bg-primary/90 transition border border-primary">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>Sync Alerts</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <form method="get" class="flex items-center gap-2 w-full">
+            <div class="flex-1">
+                <input 
+                    type="text" 
+                    name="q"
+                    value="{{ q | default('') }}"
+                    class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                    placeholder="Search alerts by description, hostname, rule ID, or user..."
+                >
+            </div>
+            <select name="severity" class="px-3 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 text-sm focus:outline-none" onchange="this.form.submit()">
+                <option value="" {% if not severity %}selected{% endif %}>All Severities</option>
+                <option value="info" {% if severity == 'info' %}selected{% endif %}>Info</option>
+                <option value="moderate" {% if severity == 'moderate' %}selected{% endif %}>Moderate</option>
+                <option value="high" {% if severity == 'high' %}selected{% endif %}>High</option>
+                <option value="critical" {% if severity == 'critical' %}selected{% endif %}>Critical</option>
+            </select>
+            <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
+        </form>
+    </div>
+</div>
+<div class="w-full py-6 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-full">
+    <h2 class="text-xl font-bold text-secondary-100 mb-4">Alerts ({{ pagination_data.total }})</h2>
+
+    <div class="flex flex-col gap-4 overflow-y-auto h-[calc(100%-100px)]">
+        {% if data %}
+            {% for alert in data %}
+            {% set level = alert.level_text|lower %}
+            {% if level == "info" %}
+                {% set icon = "fa-circle-info" %}
+                {% set bg = "bg-accent-info/10" %}
+                {% set border = "border-accent-info" %}
+                {% set icon_color = "text-accent-info" %}
+            {% elif level == "moderate" %}
+                {% set icon = "fa-triangle-exclamation" %}
+                {% set bg = "bg-accent-warning/10" %}
+                {% set border = "border-accent-warning" %}
+                {% set icon_color = "text-accent-warning" %}
+            {% elif level == "high" %}
+                {% set icon = "fa-exclamation-circle" %}
+                {% set bg = "bg-orange-900/10" %}
+                {% set border = "border-orange-500" %}
+                {% set icon_color = "text-orange-400" %}
+            {% elif level == "critical" %}
+                {% set icon = "fa-skull-crossbones" %}
+                {% set bg = "bg-accent-error/10" %}
+                {% set border = "border-accent-error" %}
+                {% set icon_color = "text-accent-error" %}
+            {% else %}
+                {% set icon = "fa-bell" %}
+                {% set bg = "bg-secondary-800/10" %}
+                {% set border = "border-secondary-700" %}
+                {% set icon_color = "text-secondary-400" %}
+            {% endif %}
+
+            <div class="flex items-start space-x-3 p-4 rounded-lg border {{ bg }} {{ border }} max-md:flex-col max-md:space-x-0 max-md:space-y-2">
+                <i class="fa-solid {{ icon }} text-xl {{ icon_color }} flex-shrink-0"></i>
+                <div class="flex-1 min-w-0 w-full">
+                    <div class="flex items-center justify-between mb-2 max-md:flex-col max-md:items-start max-md:gap-1">
+                        <h4 class="text-slate-100 font-medium break-words">{{ alert.description }}</h4>
+                        <div class="flex items-center space-x-2 max-md:mt-1">
+                            <span class="inline-block px-2 py-1 rounded border text-xs border-current {{ icon_color }}">
+                                Level {{ alert.level }}
+                            </span>
+                            <span class="inline-block px-2 py-1 rounded bg-secondary-700 text-xs text-secondary-200">
+                                Rule {{ alert.rule_id }}
+                            </span>
+                            <span 
+                                data-alert='{
+                                    "unique_id": {{ alert.unique_id|tojson|safe }},
+                                    "description": {{ alert.description|tojson|safe }},
+                                    "level": {{ alert.level|tojson|safe }},
+                                    "level_text": {{ alert.level_text|tojson|safe }},
+                                    "rule_id": {{ alert.rule_id|tojson|safe }},
+                                    "hostname": {{ alert.hostname|tojson|safe }},
+                                    "device_ip": {{ alert.device_ip|tojson|safe }},
+                                    "user": {{ alert.user|tojson|safe }},
+                                    "log_file_path": {{ alert.log_file_path|tojson|safe }},
+                                    "log": {{ alert.log|tojson|safe }},
+                                    "level_meaning": {{ alert.level_meaning|tojson|safe }},
+                                    "timestamp": {{ alert.timestamp|string|tojson|safe }}
+                                }'
+                                onclick="showAlertModal(this)"
+                                class="inline-block px-2 py-1 rounded bg-secondary-700 text-xs text-secondary-200 hover:bg-secondary-200 hover:text-secondary-700 cursor-pointer"
+                                title="View details"
+                            >
+                                <i class="fa fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 text-sm text-slate-400 mb-2 max-md:grid-cols-2 max-sm:grid-cols-1">
+                        <div>
+                            Host: <span class="text-slate-300 break-all">{{ alert.hostname }}</span>
+                        </div>
+                        <div>
+                            IP: <span class="text-slate-300 break-all">{{ alert.device_ip }}</span>
+                        </div>
+                        {% if alert.user %}
+                        <div>
+                            User: <span class="text-slate-300 break-all">{{ alert.user }}</span>
+                        </div>
+                        {% endif %}
+                        <div>
+                            Log: <span class="text-slate-300 break-all">{{ alert.log_file_path }}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-slate-500 bg-slate-800/50 p-2 rounded font-mono break-words">
+                        {% if alert.log and alert.log|length > 150 %}
+                            {{ alert.log[:150] }}...
+                        {% else %}
+                            {{ alert.log }}
+                        {% endif %}
+                    </div>
+
+                    <div class="flex items-center justify-between mt-2 max-md:flex-col max-md:items-start max-md:gap-1">
+                        <span class="text-slate-500 text-xs">{{ alert.level_meaning }}</span>
+                        <span class="text-slate-500 text-xs flex items-center">
+                            <i class="fa-regular fa-clock h-3 w-3 mr-1"></i>
+                            {{ alert.timestamp }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <p class="text-secondary-400 text-lg text-center">No recent alerts</p>
+        {% endif %}
+    </div>
+    {% if data %}
+    {% include "components/paginator.html" %}
+    {% endif %}
+</div>
+
+<script>
+function showAlertModal(el) {
+    let alert = {};
+    try {
+        alert = JSON.parse(el.getAttribute('data-alert'));
+    } catch (e) {
+        alert = {};
+    }
+    let html = `
+        <div class="space-y-6">
+            <h2 class="text-lg font-bold text-secondary-100">Alert Details</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Alert Information -->
+                <div>
+                    <h3 class="text-secondary-300 text-sm font-semibold mb-2">Alert Information</h3>
+                    <div class="flex flex-col gap-2 text-xs">
+                        <div>
+                            <span class="text-secondary-400">Alert ID:</span>
+                            <span class="text-secondary-100 font-mono ml-1">${alert.unique_id || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">Rule ID:</span>
+                            <span class="text-secondary-100 font-mono ml-1">${alert.rule_id || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">Level:</span>
+                            <span class="inline-block px-2 py-1 rounded text-xs ml-1
+                                ${
+                                    alert.level_text && alert.level_text.toLowerCase() === 'critical' ? 'bg-accent-error/10 text-accent-error border border-accent-error' :
+                                    alert.level_text && alert.level_text.toLowerCase() === 'high' ? 'bg-orange-900/10 text-orange-400 border border-orange-500' :
+                                    alert.level_text && alert.level_text.toLowerCase() === 'moderate' ? 'bg-accent-warning/10 text-accent-warning border border-accent-warning' :
+                                    alert.level_text && alert.level_text.toLowerCase() === 'info' ? 'bg-accent-info/10 text-accent-info border border-accent-info' :
+                                    'bg-secondary-800 text-secondary-200 border border-secondary-700'
+                                }"
+                            >
+                                ${alert.level ? alert.level : ''}
+                                ${alert.level_meaning ? ' - ' + alert.level_meaning : ''}
+                            </span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">Description:</span>
+                            <span class="text-secondary-100 ml-1">${alert.description || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">Timestamp:</span>
+                            <span class="text-secondary-100 ml-1">${alert.timestamp || ''}</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- System Information -->
+                <div>
+                    <h3 class="text-secondary-300 text-sm font-semibold mb-2">System Information</h3>
+                    <div class="flex flex-col gap-2 text-xs">
+                        <div>
+                            <span class="text-secondary-400">Hostname:</span>
+                            <span class="text-secondary-100 ml-1">${alert.hostname || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">IP Address:</span>
+                            <span class="text-secondary-100 ml-1">${alert.device_ip || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">User:</span>
+                            <span class="text-secondary-100 ml-1">${alert.user || ''}</span>
+                        </div>
+                        <div>
+                            <span class="text-secondary-400">Log File:</span>
+                            <span class="text-secondary-100 ml-1">${alert.log_file_path || ''}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Raw Log Data -->
+            <div>
+                <h3 class="text-secondary-300 text-sm font-semibold mb-2">Raw Log Data</h3>
+                <div class="text-xs text-slate-200 bg-slate-800/80 p-2 rounded font-mono break-words border border-secondary-700">
+                    ${alert.log || ''}
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('alert-modal-content').innerHTML = html;
+    openModal();
+}
+</script>
+{% endblock %}
