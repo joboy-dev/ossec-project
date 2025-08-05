@@ -60,6 +60,7 @@ frontend.env.globals['get_flashed_messages'] = get_flashed_messages
 app.state.frontend = frontend
 
 # Mount static files
+os.makedirs("./frontend/static", exist_ok=True)
 app.mount("/static", staticfiles.StaticFiles(directory="frontend/static"), name="static")
 
 # Register Middleware
