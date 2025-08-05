@@ -24,7 +24,7 @@ cd "$INSTALL_DIR"
 
 # === 3️⃣ Create .env file ===
 echo "🔄 Creating .env file..."
-cp "$INSTALL_DIR/.env.example" "$INSTALL_DIR/.env"
+cp "$INSTALL_DIR/.env.sample" "$INSTALL_DIR/.env"
 
 if [ -d "env" ]; then
     echo "🔎 Virtual environment already exists. Skipping creation."
@@ -49,7 +49,11 @@ echo "✅ ossec-dashboard setup complete!"
 echo "📂 Installed in: $INSTALL_DIR"
 echo "🕒 Cron job added (runs every minute). Check logs: tail -f /tmp/ossec_cron.log"
 
+# Create logs directory and app_logs.log file if they don't exist
+mkdir -p logs
+touch logs/app_logs.log
+
 echo "🔄 Starting ossec-dashboard..."
-./start.sh
+python3 main.py
 
 echo "Done!"
