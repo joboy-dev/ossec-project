@@ -12,9 +12,10 @@ class User(BaseTableModel):
     email = sa.Column(sa.String, nullable=True, unique=True, index=True)
     username = sa.Column(sa.String, nullable=True, unique=True, index=True)
     password = sa.Column(sa.String, nullable=True)
-    is_active = sa.Column(sa.Boolean, default=False)
-    is_admin = sa.Column(sa.Boolean, default=False)
-    last_login = sa.Column(sa.DateTime(timezone=True), default=datetime.now(timezone.utc))
+    is_active = sa.Column(sa.Boolean, default=False, index=True)
+    is_admin = sa.Column(sa.Boolean, default=False, index=True)
+    is_approved = sa.Column(sa.Boolean, default=False, index=True)
+    last_login = sa.Column(sa.DateTime(timezone=True), nullable=True)
     
     def to_dict(self, excludes=[]):
         return super().to_dict(excludes=excludes+['password'])

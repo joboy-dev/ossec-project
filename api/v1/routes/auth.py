@@ -86,6 +86,7 @@ async def register(
                 bg_tasks=bg_tasks,
                 is_active=True,
                 is_admin=True,
+                is_approved=True,
                 create_token=True
             )
             
@@ -190,6 +191,7 @@ async def request_access(
                 bg_tasks=bg_tasks,
                 is_active=False,
                 is_admin=False,
+                is_approved=False,
                 create_token=False
             )
             

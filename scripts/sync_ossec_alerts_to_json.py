@@ -135,7 +135,9 @@ with open(OUTPUT_FILE, "w") as f:
 print(f"✅ Alerts saved to {OUTPUT_FILE}")
 
 # result = subprocess.run(
-#     ["python3", f"{ROOT_DIR}/scripts/load_alerts_into_db.py"], 
+#     # ["python3", f"{ROOT_DIR}/scripts/load_alerts_into_db.py"], 
+#     ["python3", f"scripts/load_alerts_into_db.py"], 
 #     capture_output=True, text=True
 # )
 # print(result.stdout)
+# print(result.stderr)

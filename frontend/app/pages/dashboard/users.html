@@ -1,5 +1,11 @@
 {% extends "pages/dashboard/layout.html" %}
 
+{% block modal_content %} 
+    <div id="edit-user-modal-content">
+        <!-- Modal content will be injected here by JS -->
+    </div>
+{% endblock %}
+
 {% block dashboard_content %}
 <div class="p-4">
     <div class="">
@@ -29,7 +35,7 @@
                     <input 
                         type="text" 
                         name="username"
-                        value="{{ name | default('') }}"
+                        value="{{ username | default('') }}"
                         class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
                         placeholder="Search users by username"
                     >
@@ -38,6 +44,8 @@
                     <option value="" {% if not status %}selected{% endif %}>All Status</option>
                     <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
                     <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>Inactive</option>
+                    <option value="approved" {% if status == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="unapproved" {% if status == 'unapproved' %}selected{% endif %}>Unapproved</option>
                 </select>
                 <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
             </form>
@@ -82,8 +90,24 @@
                             {% else %}
                                 <span class="bg-accent-error/10 text-accent-error border border-accent-error text-xs px-3 py-1 rounded">Inactive</span>
                             {% endif %}
-                            <a href="/dashboard/users/edit/{{ user.id }}" class="btn bg-secondary-800 border border-secondary-600 text-secondary-200 text-xs px-3 py-1 hover:bg-secondary-700 transition">Edit</a>
-                            <form action="/dashboard/users/delete/{{ user.id }}" method="post" class="inline">
+                            {% if user.is_approved %}
+                                <span class="bg-accent-success/10 text-accent-success border border-accent-success text-xs px-3 py-1 rounded">Approved</span>
+                            {% else %}
+                                <span class="bg-accent-error/10 text-accent-error border border-accent-error text-xs px-3 py-1 rounded">Unapproved</span>
+                            {% endif %}
+                            <span 
+                                class="btn bg-secondary-800 border border-secondary-600 text-secondary-200 text-xs px-3 py-1 hover:bg-secondary-700 transition cursor-pointer"
+                                data-user='{
+                                    "id": {{ user.id|tojson|safe }},
+                                    "username": {{ user.username|tojson|safe }},
+                                    "email": {{ user.email|tojson|safe }},
+                                    "is_active": {{ user.is_active|tojson|safe }},
+                                    "is_approved": {{ user.is_approved|tojson|safe }},
+                                    "is_admin": {{ user.is_admin|tojson|safe }}
+                                }'
+                                onclick="showEditUserModal(this)"
+                            >Edit</span>
+                            <form action="/users/{{ user.id }}/delete" method="post" class="inline">
                                 <button type="submit" class="btn bg-accent-error/10 border border-accent-error text-accent-error text-xs px-3 py-1 hover:bg-accent-error/20 transition">Delete</button>
                             </form>
                         </div>
@@ -99,4 +123,97 @@
         {% endif %}
     </div>
 </div>
+
+
+<script>
+    function showEditUserModal(el) {
+        let user = {};
+        try {
+            user = JSON.parse(el.getAttribute('data-user'));
+        } catch (e) {
+            user = {};
+        }
+        // Ensure user.id is present for the form action
+        let userId = user.id !== undefined ? user.id : '';
+        let html = `
+            <form method="post" action="/users/${userId}/edit" class="space-y-6">
+                <h2 class="text-lg font-bold text-secondary-100">Edit User</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- User Information -->
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <label class="block text-secondary-300 text-sm font-semibold mb-1" for="username">Username</label>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                value="${typeof user.username !== 'undefined' ? user.username : ''}" 
+                                class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                                required
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-secondary-300 text-sm font-semibold mb-1" for="email">Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                value="${typeof user.email !== 'undefined' ? user.email : ''}" 
+                                class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                                required
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- User Status -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="checkbox" 
+                                id="is_active" 
+                                name="is_active" 
+                                class="accent-primary w-5 h-5 rounded border-secondary-700 focus:ring-primary"
+                                ${user.is_active ? 'checked' : ''}
+                            >
+                            <label for="is_active" class="text-secondary-200 text-sm font-semibold select-none cursor-pointer">
+                                Active
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="checkbox" 
+                                id="is_approved" 
+                                name="is_approved" 
+                                class="accent-primary w-5 h-5 rounded border-secondary-700 focus:ring-primary"
+                                ${user.is_approved ? 'checked' : ''}
+                            >
+                            <label for="is_approved" class="text-secondary-200 text-sm font-semibold select-none cursor-pointer">
+                                Approved
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="checkbox" 
+                                id="is_admin" 
+                                name="is_admin" 
+                                class="accent-primary w-5 h-5 rounded border-secondary-700 focus:ring-primary"
+                                ${user.is_admin ? 'checked' : ''}
+                            >
+                            <label for="is_admin" class="text-secondary-200 text-sm font-semibold select-none cursor-pointer">
+                                Administrator
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button type="submit" class="btn bg-primary text-secondary-900 px-6 py-2 rounded hover:bg-primary/90 transition text-sm font-semibold">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        `;
+        document.getElementById('edit-user-modal-content').innerHTML = html;
+        openModal();
+    }
+</script>
 {% endblock %}

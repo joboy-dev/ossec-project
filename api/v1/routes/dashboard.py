@@ -121,7 +121,6 @@ async def processes(
     per_page: int = 20,
     name: str = None,
     status: str = None,
-    # db: Session=Depends(get_db)
 ):
     total_processes = len(psutil.pids())
     skip = (page - 1) * per_page
@@ -153,6 +152,20 @@ async def users(
     status: str = None,
     db: Session=Depends(get_db),
 ):
+    if status == "active":
+        is_active = True
+    elif status == "inactive":
+        is_active = False
+    else:
+        is_active = None
+        
+    if status == "approved":
+        is_approved = True
+    elif status == "unapproved":
+        is_approved = False
+    else:
+        is_approved = None
+        
     query, users, count = User.fetch_by_field(
         db=db, 
         page=page,
@@ -161,10 +174,14 @@ async def users(
         search_fields={
             'username': username if username != "" else None,
         },
-        is_active=status == 'active' if status else None
+        is_active=is_active,
+        is_approved=is_approved
     )
     
-    query = query.filter(User.id != request.state.current_user.id)
+    query = query.filter(
+        User.id != request.state.current_user.id,
+        User.is_admin == False
+    )
     count = query.count()
     users = query.all()
     

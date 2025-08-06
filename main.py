@@ -22,6 +22,7 @@ from api.core.dependencies.middleware import AuthMiddleware
 from api.db.database import create_database
 from api.utils.loggers import create_logger
 from api.utils.log_streamer import log_streamer
+from api.utils.port_checker import find_free_port
 from api.v1.routes import v1_router
 from api.utils.settings import settings
 
@@ -183,7 +184,11 @@ async def exception(request: Request, exc: Exception):
 if __name__ == "__main__":
     uvicorn.run(
         "main:app", 
-        port=config('PORT', cast=int, default=7001), 
+        host='0.0.0.0',
+        port=find_free_port(
+            port=config('PORT', cast=int, default=7001),
+            is_production=config('PYTHON_ENV') == "production"
+        ), 
         reload=True,
         workers=4,
         reload_excludes=['logs/']

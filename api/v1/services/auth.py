@@ -316,3 +316,11 @@ class AuthService:
         
         user = cls._validate_token(db, token, credentials_exception)
         return user
+    
+    
+    @classmethod
+    def is_user_admin(cls, db: Session, user_id: str):
+        user = User.fetch_by_id(db, user_id, "User does not exist")
+        
+        if not user.is_admin:
+            raise HTTPException(403, "Permission denied")

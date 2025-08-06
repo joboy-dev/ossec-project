@@ -56,4 +56,8 @@ touch logs/app_logs.log
 echo "🔄 Starting ossec-dashboard..."
 python3 main.py
 
+# Update alembic here
+# alembic revision --autogenerate -m "auto migration"
+# alembic upgrade head
+
 echo "Done!"

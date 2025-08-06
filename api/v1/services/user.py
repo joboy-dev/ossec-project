@@ -30,6 +30,7 @@ class UserService:
         bg_tasks: BackgroundTasks,
         is_active: bool = False,
         is_admin: bool = False,
+        is_approved: bool = False,
         create_token: bool = True
     ):
         """Creates a new user"""
@@ -56,7 +57,8 @@ class UserService:
             username=email.split('@')[0],
             password=password,
             is_active=is_active,
-            is_admin=is_admin
+            is_admin=is_admin,
+            is_approved=is_approved,
         )
         
         if create_token:

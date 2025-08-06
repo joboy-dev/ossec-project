@@ -1,8 +1,28 @@
+{# 
+    This paginator preserves all existing query parameters except for "page", 
+    which it sets to the correct value for each link.
+    It uses a macro to build the correct query string for each page link.
+    request.query_params is a MultiDict, so we use .items() to get key-value pairs.
+#}
+{% macro page_url(page) -%}
+    {# Build a dict of all current query parameters except "page" #}
+    {%- set params = {} -%}
+    {%- if request and request.query_params -%}
+        {%- for k, v in request.query_params.items() -%}
+            {%- if k != 'page' -%}
+                {%- set _ = params.update({k: v}) -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+    {%- set _ = params.update({'page': page}) -%}
+    ?{{ params|urlencode }}
+{%- endmacro %}
+
 <div id="paginator" aria-label="Pagination" class="flex justify-center mt-6">
     <ul class="inline-flex items-center space-x-1 max-sm:space-x-0 max-sm:w-full max-sm:justify-between max-sm:px-1">
         {% if pagination_data.previous_page %}
         <li>
-            <a href="?page={{ pagination_data.current_page - 1 }}" aria-label="Previous"
+            <a href="{{ page_url(pagination_data.current_page - 1) }}" aria-label="Previous"
                class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
                 <span aria-hidden="true">&laquo;</span>
             </a>
@@ -16,7 +36,7 @@
         {% if pagination_data.pages <= 10 %}
             {% for i in range(1, pagination_data.pages + 1) %}
             <li class="max-sm:hidden sm:inline">
-                <a href="?page={{ i }}"
+                <a href="{{ page_url(i) }}"
                    class="px-3 py-1 rounded-md transition
                    {% if i == pagination_data.current_page %}
                        bg-accent-info text-white font-bold
@@ -37,7 +57,7 @@
         {% else %}
             {% if pagination_data.current_page > 4 %}
                 <li class="max-sm:hidden sm:inline">
-                    <a href="?page=1" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">1</a>
+                    <a href="{{ page_url(1) }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">1</a>
                 </li>
                 <li class="max-sm:hidden sm:inline">
                     <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
@@ -47,7 +67,7 @@
             {% set end = pagination_data.current_page + 2 if pagination_data.current_page + 2 < pagination_data.pages else pagination_data.pages %}
             {% for i in range(start, end + 1) %}
             <li class="max-sm:hidden sm:inline">
-                <a href="?page={{ i }}"
+                <a href="{{ page_url(i) }}"
                    class="px-3 py-1 rounded-md transition
                    {% if i == pagination_data.current_page %}
                        bg-accent-info text-white font-bold
@@ -64,7 +84,7 @@
                     <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
                 </li>
                 <li class="max-sm:hidden sm:inline">
-                    <a href="?page={{ pagination_data.pages }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">{{ pagination_data.pages }}</a>
+                    <a href="{{ page_url(pagination_data.pages) }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">{{ pagination_data.pages }}</a>
                 </li>
             {% endif %}
             <!-- On small screens, show only current page -->
@@ -77,7 +97,7 @@
 
         {% if pagination_data.next_page %}
         <li>
-            <a href="?page={{ pagination_data.current_page + 1 }}" aria-label="Next"
+            <a href="{{ page_url(pagination_data.current_page + 1) }}" aria-label="Next"
                class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
                 <span aria-hidden="true">&raquo;</span>
             </a>
