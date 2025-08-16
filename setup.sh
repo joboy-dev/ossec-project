@@ -44,6 +44,7 @@ chmod +x start.sh
 
 # === 3️⃣ Add cron job (run every minute) ===
 (crontab -l 2>/dev/null | grep -v "$INSTALL_DIR/scripts/sync_ossec_alerts.sh" ; echo "* * * * * /bin/bash $INSTALL_DIR/scripts/sync_ossec_alerts.sh >> /tmp/ossec_cron.log 2>&1") | crontab -
+(crontab -l 2>/dev/null | grep -v "$INSTALL_DIR/scripts/sync_monitored_files.sh" ; echo "* * * * * /bin/bash $INSTALL_DIR/scripts/sync_monitored_files.sh >> /tmp/ossec_cron.log 2>&1") | crontab -
 
 echo "✅ ossec-dashboard setup complete!"
 echo "📂 Installed in: $INSTALL_DIR"

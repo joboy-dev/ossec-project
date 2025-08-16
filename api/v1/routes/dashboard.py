@@ -142,6 +142,43 @@ async def processes(
     )
     
 
+@dashboard_router.get('/files')
+@add_template_context('pages/dashboard/files.html')
+async def files(
+    request: Request, 
+    page: int = 1,
+    per_page: int = 20,
+    path: str = None,
+    status: str = None,
+):
+    offset = (page - 1) * per_page
+    all_files, total = ossec_service.get_all_monitored_files(limit=per_page, offset=offset)
+    
+    if path:
+        all_files = [file for file in all_files if path.lower() in file.get("path", "").lower()]
+    if status:
+        all_files = [file for file in all_files if file.get("status", "").lower() == status.lower()]
+            
+    return paginator.build_paginated_response(
+        items=all_files,
+        endpoint='/dashboard/files',
+        page=page,
+        size=per_page,
+        total=total,
+    )
+    
+
+@dashboard_router.post("/sync-files")
+async def sync_files(request: Request, db: Session=Depends(get_db)):
+    success = ossec_service.sync_monitored_files()
+    if not success:
+        flash(request, "Error syncing monitored files", MessageCategory.ERROR)
+    else:
+        flash(request, "Monitored files synced", MessageCategory.SUCCESS)
+        
+    return RedirectResponse(url="/dashboard/files", status_code=303)
+    
+
 @dashboard_router.get('/users')
 @add_template_context('pages/dashboard/users.html')
 async def users(

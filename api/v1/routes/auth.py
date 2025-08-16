@@ -199,7 +199,7 @@ async def request_access(
             
             flash(request, 'Access request made successfully', MessageCategory.SUCCESS)
             
-            response = RedirectResponse(url="/", status_code=303)
+            response = RedirectResponse(url="/auth/request-access", status_code=303)
             
             return response
             

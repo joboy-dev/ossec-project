@@ -172,3 +172,22 @@ def paginate_query(query, page: int, per_page: int):
     count = query.count()
     offset = (page - 1) * per_page
     return query.offset(offset).limit(per_page).all(), count
+
+
+def read_file_paginated(
+    file_path: str, 
+    offset: int = 0, 
+    limit: int = 50, 
+    from_file_end: bool = True
+):
+    with open(file_path, "r") as file:
+        lines = file.readlines()
+        
+    if from_file_end:
+        start = max(len(lines) - offset - limit, 0)
+        end = len(lines) - offset
+        return [line.strip() for line in lines[start:end]]
+    else:
+        start = offset
+        end = offset + limit
+        return [line.strip() for line in lines[start:end]]

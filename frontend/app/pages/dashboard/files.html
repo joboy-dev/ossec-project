@@ -1,0 +1,118 @@
+{% extends "pages/dashboard/layout.html" %}
+
+{% block dashboard_content %}
+<div class="w-full py-4 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-fit mb-4">
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between mb-2">
+            <h1 class="text-secondary-100 font-bold text-2xl flex items-center gap-2">
+                <i class="fa-solid fa-file-shield text-accent-info text-2xl"></i>
+                File Integrity Monitoring
+            </h1>
+            <div class="flex items-center gap-2">
+                <form action="/dashboard/files" method="get" class="inline">
+                    <button type="submit" class="flex items-center gap-2 px-3 py-1 bg-transparent text-secondary-200 text-sm transition">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </form>
+                <form action="/dashboard/sync-files" method="post">
+                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded bg-primary text-secondary-900 text-sm font-semibold shadow hover:bg-primary/90 transition border border-primary">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                        <span>Sync FIles</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <form method="get" class="flex flex-wrap items-center gap-2 w-full">
+            <div class="flex-1 min-w-[200px]">
+                <input 
+                    type="text" 
+                    name="path"
+                    value="{{ path | default('') }}"
+                    class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                    placeholder="Search files by path"
+                >
+            </div>
+            <select name="status" class="px-3 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 text-sm focus:outline-none">
+                <option value="" {% if not status %}selected{% endif %}>All Status</option>
+                <option value="normal" {% if status == 'normal' %}selected{% endif %}>Normal</option>
+                <option value="suspicious" {% if status == 'suspicious' %}selected{% endif %}>Suspicious</option>
+            </select>
+            <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="w-full py-6 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-full">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-secondary-100">Monitored files ({{ pagination_data.total }})</h2>
+    </div>
+    <div class="flex flex-col gap-4 overflow-y-auto h-[calc(100%-100px)]">
+        {% if data %}
+            {% for file in data %}
+            <div class="rounded-lg border border-secondary-700 bg-secondary-900/60 p-4 flex flex-col gap-2 shadow-sm">
+                <div class="flex items-center gap-2 mb-1">
+                    {% if file.status|lower == 'verified' %}
+                        <i class="fa-solid fa-circle-check text-accent-success"></i>
+                    {% elif file.status|lower == 'modified' %}
+                        <i class="fa-solid fa-pen-to-square text-accent-warning"></i>
+                    {% elif file.status|lower == 'new file' %}
+                        <i class="fa-solid fa-plus-circle text-accent-info"></i>
+                    {% elif file.status|lower == 'deleted' %}
+                        <i class="fa-solid fa-trash text-accent-error"></i>
+                    {% elif file.status|lower == 'integrity error' %}
+                        <i class="fa-solid fa-triangle-exclamation text-accent-error"></i>
+                    {% else %}
+                        <i class="fa-solid fa-file-alt text-secondary-400"></i>
+                    {% endif %}
+                    <span class="font-mono text-secondary-100 text-base">{{ file.path }}</span>
+                    {% if file.status|lower == 'verified' %}
+                        <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-success/10 text-accent-success border border-accent-success">Verified</span>
+                    {% elif file.status|lower == 'modified' %}
+                        <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-warning/10 text-accent-warning border border-accent-warning">Modified</span>
+                    {% elif file.status|lower == 'new file' %}
+                        <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-info/10 text-accent-info border border-accent-info">New File</span>
+                    {% elif file.status|lower == 'deleted' %}
+                        <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-error/10 text-accent-error border border-accent-error">Deleted</span>
+                    {% elif file.status|lower == 'integrity error' %}
+                        <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-error/10 text-accent-error border border-accent-error">Integrity Error</span>
+                    {% endif %}
+                </div>
+                <div class="flex flex-wrap gap-6 text-xs text-secondary-300 font-mono mb-1">
+                    <div>
+                        <span class="text-secondary-400">Size:</span>
+                        <span class="text-secondary-100">{{ file.size }}</span>
+                    </div>
+                    <div>
+                        <span class="text-secondary-400">Permissions:</span>
+                        <span class="text-secondary-100">{{ file.permissions }}</span>
+                    </div>
+                    <div>
+                        <span class="text-secondary-400">Last Modified:</span>
+                        <span class="text-secondary-100">{{ file.last_modified }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1 text-xs text-secondary-300 font-mono bg-secondary-800 rounded p-2">
+                    <div>
+                        <span class="text-secondary-400">Current:</span>
+                        <span class="text-secondary-100 break-all">{{ file.current }}</span>
+                    </div>
+                    <div>
+                        <span class="text-secondary-400">Baseline:</span>
+                        <span class="text-secondary-100 break-all">{{ file.baseline }}</span>
+                    </div>
+                </div>
+                <div class="text-xs text-secondary-400 mt-1 pl-1">
+                    <i class="fa-regular fa-clock mr-1"></i>
+                    Last checked: {{ file.last_checked }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-secondary-400 text-lg text-center">No monitored files found </p>
+        {% endif %}
+    </div>
+    {% if data %}
+    {% include "components/paginator.html" %}
+    {% endif %}
+</div>
+{% endblock %}

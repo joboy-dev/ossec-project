@@ -194,8 +194,11 @@ To replicate OSSEC setup on another server:
     2. Paste the following at the bottom of the file and save:
         `<yourusername> ALL=(ALL) NOPASSWD: /var/ossec/bin/ossec-control`
         `<yourusername> ALL=(ALL) NOPASSWD: /opt/ossec-dashboard/scripts/sync_ossec_alerts.sh`
+        `<yourusername> ALL=(ALL) NOPASSWD: /opt/ossec-dashboard/scripts/sync_monitored_files.sh`
 
     3. Replace <yourusername> with your computer username. THis is to prevent passwordless login for sudo commands used in the app for ossec services
+
+    4. Save the file using CTRL + O. Then Press Enter and then CTRL + X
 
 - Keep your SMTP configuration secure — avoid hardcoding credentials.
 
