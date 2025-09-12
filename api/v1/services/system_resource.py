@@ -1,6 +1,11 @@
 from datetime import datetime
 import psutil, os, time
 
+from api.utils.loggers import create_logger
+
+
+logger = create_logger(__name__)
+
 class SystemResourceService:
     
     def format_bytes(cls, bytes):
@@ -105,6 +110,7 @@ class SystemResourceService:
                     "status": status,
                 })
                 count += 1
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess) as e:
+                logger.error(e)
                 continue
         return processes
