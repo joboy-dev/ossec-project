@@ -211,3 +211,4 @@ api/core/dependencies/serviceAccount.json
 api/core/dependencies/firebase_config.py
 
 *.db
+.vscode
