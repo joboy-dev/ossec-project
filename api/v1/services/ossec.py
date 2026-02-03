@@ -236,7 +236,9 @@ class OssecService:
         monitored = []
         for syscheck in root.findall(".//syscheck", namespaces):
             for dirs in syscheck.findall("directories", namespaces):
-                monitored.extend(dirs.text.strip().split(","))
+                text = (dirs.text or "").strip()
+                if text:
+                    monitored.extend(p.strip() for p in text.split(",") if p.strip())
         return monitored
     
     def add_monitored_path(self, new_path: str, config_path: str="/var/ossec/etc/ossec.conf"):
@@ -261,6 +263,25 @@ class OssecService:
         tree.write(config_path)
         
         # Restart OSSEC
+        self.restart_ossec()
+
+    def remove_monitored_path(self, path: str, config_path: str = "/var/ossec/etc/ossec.conf"):
+        """Remove a path from monitored directories."""
+        self.backup_ossec_config()
+        tree = ET.parse(config_path)
+        root = tree.getroot()
+        syscheck = root.find(".//syscheck")
+        if syscheck is None:
+            return
+        for directories in syscheck.findall("directories"):
+            dirs = [d.strip() for d in (directories.text or "").split(",") if d.strip()]
+            if path in dirs:
+                dirs = [d for d in dirs if d != path]
+                directories.text = ",".join(dirs) if dirs else ""
+                if not dirs:
+                    syscheck.remove(directories)
+                break
+        tree.write(config_path)
         self.restart_ossec()
         
     def update_monitored_path_attribute(
@@ -306,8 +327,10 @@ class OssecService:
         
         ignored = []
         for syscheck in root.findall(".//syscheck", namespaces):
-            for dirs in syscheck.findall("ignore", namespaces):
-                ignored.extend(dirs.text.strip().split(","))
+            for ignore_elem in syscheck.findall("ignore", namespaces):
+                text = (ignore_elem.text or "").strip()
+                if text:
+                    ignored.extend(p.strip() for p in text.split(",") if p.strip())
         return ignored
     
     def add_ignored_path(self, new_path: str, config_path: str="/var/ossec/etc/ossec.conf"):
@@ -332,6 +355,25 @@ class OssecService:
         tree.write(config_path)
         
         # Restart OSSEC
+        self.restart_ossec()
+
+    def remove_ignored_path(self, path: str, config_path: str = "/var/ossec/etc/ossec.conf"):
+        """Remove a path from ignored directories."""
+        self.backup_ossec_config()
+        tree = ET.parse(config_path)
+        root = tree.getroot()
+        syscheck = root.find(".//syscheck")
+        if syscheck is None:
+            return
+        for ignore in syscheck.findall("ignore"):
+            dirs = [d.strip() for d in (ignore.text or "").split(",") if d.strip()]
+            if path in dirs:
+                dirs = [d for d in dirs if d != path]
+                ignore.text = ",".join(dirs) if dirs else ""
+                if not dirs:
+                    syscheck.remove(ignore)
+                break
+        tree.write(config_path)
         self.restart_ossec()
     
     def set_syscheck_tag(self, tag: str, value: str, config_path: str = "/var/ossec/etc/ossec.conf"):
@@ -380,5 +422,16 @@ class OssecService:
         tag_elem.text = str(value)
         tree.write(config_path)
         self.restart_ossec()
+
+    def get_global_tag(self, tag: str, config_path: str = "/var/ossec/etc/ossec.conf"):
+        """Get the value of a tag in the <global> section."""
+        tree = ET.parse(config_path)
+        root = tree.getroot()
+        global_elem = root.find(".//global")
+        if global_elem is not None:
+            tag_elem = global_elem.find(tag)
+            if tag_elem is not None and tag_elem.text is not None:
+                return tag_elem.text.strip()
+        return None
 
 ossec_service = OssecService()

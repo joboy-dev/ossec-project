@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, BackgroundTasks, Cookie, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Cookie, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 import psutil
 from sqlalchemy.orm import Session
@@ -230,3 +230,142 @@ async def users(
         size=per_page,
         total=count,
     )
+
+
+# ---------------------------------------------------------------------------
+# Settings routes (OSSEC config from ossec.py line 242+)
+# ---------------------------------------------------------------------------
+
+@dashboard_router.get('/settings')
+@add_template_context('pages/dashboard/settings.html')
+async def settings_page(request: Request):
+    monitored_paths = ossec_service.get_monitored_paths()
+    ignored_paths = ossec_service.get_ignored_paths()
+    syscheck_tags = ["frequency", "scan_time", "scan_day", "auto_ignore", "alert_new_files", "scan_on_start", "skip_nfs"]
+    global_tags = ["jsonout_output", "alerts_log", "logall", "logall_json"]
+    return {
+        "monitored_paths": [p.strip() for p in monitored_paths if p.strip()],
+        "ignored_paths": [p.strip() for p in ignored_paths if p.strip()],
+        "syscheck_frequency": ossec_service.get_syscheck_tag("frequency"),
+        "syscheck_scan_time": ossec_service.get_syscheck_tag("scan_time"),
+        "syscheck_scan_day": ossec_service.get_syscheck_tag("scan_day"),
+        "syscheck_auto_ignore": ossec_service.get_syscheck_tag("auto_ignore"),
+        "syscheck_alert_new_files": ossec_service.get_syscheck_tag("alert_new_files"),
+        "syscheck_scan_on_start": ossec_service.get_syscheck_tag("scan_on_start"),
+        "syscheck_skip_nfs": ossec_service.get_syscheck_tag("skip_nfs"),
+        "global_jsonout_output": ossec_service.get_global_tag("jsonout_output"),
+        "global_alerts_log": ossec_service.get_global_tag("alerts_log"),
+        "global_logall": ossec_service.get_global_tag("logall"),
+        "global_logall_json": ossec_service.get_global_tag("logall_json"),
+    }
+
+
+@dashboard_router.post("/settings/monitored-paths/add")
+async def add_monitored_path(
+    request: Request,
+    path: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.add_monitored_path(path.strip())
+        flash(request, "Monitored path added successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error adding monitored path: {e}")
+        flash(request, f"Error adding monitored path: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/monitored-paths/remove")
+async def remove_monitored_path(
+    request: Request,
+    path: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.remove_monitored_path(path.strip())
+        flash(request, "Monitored path removed successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error removing monitored path: {e}")
+        flash(request, f"Error removing monitored path: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/monitored-paths/attribute")
+async def update_monitored_path_attribute(
+    request: Request,
+    path: str = Form(...),
+    attr: str = Form(...),
+    value: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.update_monitored_path_attribute(path.strip(), attr.strip(), value.strip())
+        flash(request, f"Path attribute '{attr}' updated successfully", MessageCategory.SUCCESS)
+    except ValueError as e:
+        flash(request, str(e), MessageCategory.ERROR)
+    except Exception as e:
+        logger.error(f"Error updating path attribute: {e}")
+        flash(request, f"Error updating path attribute: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/ignored-paths/add")
+async def add_ignored_path(
+    request: Request,
+    path: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.add_ignored_path(path.strip())
+        flash(request, "Ignored path added successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error adding ignored path: {e}")
+        flash(request, f"Error adding ignored path: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/ignored-paths/remove")
+async def remove_ignored_path(
+    request: Request,
+    path: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.remove_ignored_path(path.strip())
+        flash(request, "Ignored path removed successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error removing ignored path: {e}")
+        flash(request, f"Error removing ignored path: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/syscheck")
+async def set_syscheck_setting(
+    request: Request,
+    tag: str = Form(...),
+    value: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.set_syscheck_tag(tag.strip(), value.strip())
+        flash(request, f"Syscheck '{tag}' updated successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error setting syscheck: {e}")
+        flash(request, f"Error updating syscheck: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
+
+
+@dashboard_router.post("/settings/global")
+async def set_global_setting(
+    request: Request,
+    tag: str = Form(...),
+    value: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        ossec_service.set_global_tag(tag.strip(), value.strip())
+        flash(request, f"Global setting '{tag}' updated successfully", MessageCategory.SUCCESS)
+    except Exception as e:
+        logger.error(f"Error setting global: {e}")
+        flash(request, f"Error updating global setting: {str(e)}", MessageCategory.ERROR)
+    return RedirectResponse(url="/dashboard/settings", status_code=303)
