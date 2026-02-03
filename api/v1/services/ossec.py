@@ -212,6 +212,12 @@ class OssecService:
         files = []
         file_path = f"{BASE_DIR}/logs/syscheck"
         # file_path = f"/var/ossec/queue/syscheck/syscheck"
+        
+        if not os.path.exists(file_path):
+            # Create an empty file if it does not exist
+            with open(file_path, "w"):
+                pass
+
         total = count_lines_in_file(file_path)
         lines = read_file_paginated(file_path, offset=offset, limit=limit)
         for line in lines:

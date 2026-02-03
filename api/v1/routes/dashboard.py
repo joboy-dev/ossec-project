@@ -152,6 +152,7 @@ async def files(
     status: str = None,
 ):
     offset = (page - 1) * per_page
+        
     all_files, total = ossec_service.get_all_monitored_files(limit=per_page, offset=offset)
     
     if path:
