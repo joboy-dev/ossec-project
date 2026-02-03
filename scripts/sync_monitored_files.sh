@@ -3,8 +3,8 @@
 SYSCHECK_FILE="/var/ossec/queue/syscheck/syscheck"
 echo "Syscheck file: $SYSCHECK_FILE"
 
-# PROJECT_DIR="/opt/ossec-dashboard"
-PROJECT_DIR="/mnt/6E5C97F05C97B177/Documents/Projects/Clients/ossec-project"
+PROJECT_DIR="/opt/ossec-dashboard"
+# PROJECT_DIR="/mnt/6E5C97F05C97B177/Documents/Projects/Clients/ossec-project"
 
 OUTPUT_DIR="$PROJECT_DIR/logs"
 OUTPUT_FILE="$OUTPUT_DIR/syscheck"

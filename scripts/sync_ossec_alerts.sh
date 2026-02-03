@@ -15,8 +15,8 @@ DAY=$(date +%d)
 OSSEC_LOG="/var/ossec/logs/alerts/$YEAR/$MONTH/ossec-alerts-$DAY.log"
 echo "OSSEC log file: $OSSEC_LOG"
 
-# PROJECT_DIR="/opt/ossec-dashboard"
-PROJECT_DIR="/mnt/6E5C97F05C97B177/Documents/Projects/Clients/ossec-project"
+PROJECT_DIR="/opt/ossec-dashboard"
+# PROJECT_DIR="/mnt/6E5C97F05C97B177/Documents/Projects/Clients/ossec-project"
 
 OUTPUT_DIR="$PROJECT_DIR/logs/ossec-alerts/$DATE"
 OUTPUT_FILE="$OUTPUT_DIR/alerts.log"
