@@ -1,10 +1,32 @@
 {% extends "pages/layout.html" %}
 
 {% block content %}
-<div class="flex flex-col items-center justify-center gap-2 h-screen">
-    <h1 class="text-4xl font-bold text-accent-error">ERROR!</h1>
-    <p class="text-lg text-secondary">An unexpected error occurred</p>
-    <p class="text-sm text-secondary">We are working on fixing it.</p>
-    <a href="/" class="text-primary">Go Home</a>
-</div>
+<section class="flex flex-col items-center justify-center min-h-screen bg-secondary-50 px-4">
+    <div class="relative flex flex-col items-center gap-6">
+        <div class="relative">
+            <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-10 text-[10rem] pointer-events-none select-none z-0">
+                <i class="fa-solid fa-triangle-exclamation text-accent-error drop-shadow-xl"></i>
+            </div>
+            <div class="flex flex-col items-center gap-4 z-10 relative">
+                <i class="fa-solid fa-server-crash text-7xl text-accent-error drop-shadow-lg"></i>
+                <h1 class="text-6xl font-extrabold text-accent-error tracking-wide [text-shadow:_2px_4px_24px_rgb(234_67_53_/_55%)]">500</h1>
+                <p class="text-2xl text-secondary-900 font-semibold text-center max-w-lg">
+                    Oops! Something went wrong on our end.
+                </p>
+                <p class="text-md text-secondary-600 text-center max-w-md">
+                    We encountered an unexpected error. Our team has been notified and is working to resolve the issue.
+                </p>
+                <div class="flex flex-col items-center gap-2 w-full">
+                    <a href="/" class="btn btn-interactive px-6 py-2 bg-primary text-white font-semibold rounded-lg text-lg hover:bg-primary-600 transition-all duration-200 shadow-md">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>
+                        Return Home
+                    </a>
+                    <p class="text-sm text-secondary-600 mt-2">
+                        If the problem persists, please <a href="mailto:support@example.com" class="underline text-primary">contact support</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

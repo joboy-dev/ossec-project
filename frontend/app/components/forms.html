@@ -1,27 +1,27 @@
 {% extends 'pages/layout.html' %}
 
 {% block content%}
-<section id="form" class="page-padding min-h-screen bg-secondary-900 flex items-center justify-center flex-col gap-4 w-full">
+<section id="form" class="page-padding min-h-screen bg-secondary-50 flex items-center justify-center flex-col gap-4 w-full">
     <form method="post" action="{{ form.action }}" enctype="{{ form.enctype }}" class="flex flex-col gap-4 w-[50%] max-md:w-[90%]">
         <div class="flex flex-col gap-2 items-center justify-center w-full">
             {% include 'components/logo.html' %}
-            <h2 class="text-3xl font-bold text-white text-center mt-4">{{ form.title }}</h2>
+            <h2 class="text-3xl font-bold text-secondary-900 text-center mt-4">{{ form.title }}</h2>
             {% if form.subtitle %}
-            <p class="text-secondary-400 text-center text-lg">{{ form.subtitle }}</p>
+            <p class="text-secondary-600 text-center text-lg">{{ form.subtitle }}</p>
             {% endif %}
         </div>
         
-        <div class="flex flex-col gap-4 bg-secondary-800/50 p-8 rounded-lg border-2 border-secondary-700 w-full">
+        <div class="flex flex-col gap-4 bg-white p-8 rounded-xl border border-secondary-200 w-full shadow-lg">
             {% if form.fields %}
                 {% for field in form.fields %}
                 <div class="flex flex-col gap-2">
-                    <label class="text-secondary-300 text-sm" for="{{ field.name }}">{{ field.label }} {% if field.required %}<span class="text-red-500">*</span>{% endif %}</label>
+                    <label class="text-secondary-600 text-sm font-medium" for="{{ field.name }}">{{ field.label }} {% if field.required %}<span class="text-red-500">*</span>{% endif %}</label>
                     {% if field.type != 'textarea' and field.type != 'select' %}
                     <input 
                         type="{{ field.type }}" 
                         id="{{ field.name }}" 
                         name="{{ field.name }}" 
-                        class="bg-secondary-800/60 text-secondary-100 border border-secondary-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                        class="bg-white text-secondary-900 border border-secondary-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200"
                         {% if field.required %}required{% endif %}
                         {% if field.readonly %}readonly{% endif %}
                         {% if field.min_length %}minlength="{{ field.min_length }}"{% endif %}
@@ -38,7 +38,8 @@
                     {% elif field.type == 'textarea' %}
                     <textarea 
                         id="{{ field.name }}" 
-                        name="{{ field.name }}" 
+                        name="{{ field.name }}"
+                        class="bg-white text-secondary-900 border border-secondary-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200" 
                         {% if field.required %}required{% endif %}
                         {% if field.readonly %}readonly{% endif %}
                         {% if field.min_length %}minlength="{{ field.min_length }}"{% endif %}
@@ -49,7 +50,7 @@
                     </textarea>
 
                     {% elif field.type == 'select' %}
-                    <select id="{{ field.name }}" name="{{ field.name }}">
+                    <select id="{{ field.name }}" name="{{ field.name }}" class="bg-white text-secondary-900 border border-secondary-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all duration-200">
                         {% for option in field.options %}
                         <option value="{{ option.value }}" {% if field.value == option.value %}selected{% endif %}>{{ option.label }}</option>
                         {% endfor %}
@@ -61,7 +62,7 @@
 
             {% block extra_fields %}{% endblock %}
 
-            <input type="submit" class="btn bg-primary text-secondary-900" value="{{ form.button_text }}">
+            <input type="submit" class="btn btn-interactive bg-primary text-white hover:bg-primary-600 hover:shadow-lg" value="{{ form.button_text }}">
 
             <div class="mt-4 flex flex-col gap-2">
                 {% block extra_content %}{% endblock %}

@@ -1,57 +1,47 @@
-<nav class="sidebar w-64 h-screen bg-secondary-800 border-r border-secondary-700">
-    <div class="flex flex-col gap-2">
-        <div class="p-4 flex justify-between items-center">
+<nav class="sidebar w-64 h-screen bg-primary-50 border-r border-primary-200 flex flex-col transition-all duration-300 ease-out shrink-0 shadow-sm">
+    <div class="flex flex-col h-full">
+        <div class="p-5 flex justify-between items-center border-b border-primary-200">
             {% include "components/logo.html" %}
-            <i class="fa-solid fa-chevron-left text-white toggle-button"></i>
+            <button type="button" aria-label="Toggle sidebar" class="toggle-button p-2 rounded-lg text-primary-400 hover:text-primary hover:bg-primary/20 transition-all duration-200 hover:scale-105">
+                <i class="fa-solid fa-chevron-left text-sm"></i>
+            </button>
         </div>
         
-        <div class="flex flex-col gap-6 bg-white p-4 h-[80vh] overflow-y-auto">
-            <div class="flex flex-col gap-4">
-                <p class="text-secondary text-sm">MONITORING</p>
-                <a href="/dashboard" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-house"></i>
-                    Overview
+        <div class="flex flex-col gap-1 p-3 flex-1 overflow-y-auto py-4">
+            <div class="flex flex-col gap-1 mb-2">
+                <p class="sidebar-section-text text-primary-600 text-xs font-semibold tracking-wider uppercase px-3 py-2">Monitoring</p>
+                <a href="/dashboard" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-house w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">Overview</span>
                 </a>
-                <a href="/dashboard/alerts" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-bell"></i>
-                    Alerts
+                <a href="/dashboard/alerts" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-bell w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">Alerts</span>
                 </a>
-                <a href="/dashboard/processes" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-microchip"></i>
-                    Process Monitor
+                <a href="/dashboard/processes" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-microchip w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">Process Monitor</span>
                 </a>
-                <a href="/dashboard/files" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-file-shield"></i>
-                    File Integrity
+                <a href="/dashboard/files" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-file-shield w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">File Integrity</span>
                 </a>
-                <!-- <a href="/dashboard/log-analysis" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-file-lines"></i>
-                    Log Analysis
-                </a>
-                <a href="/dashboard/analytics" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line"></i>
-                    Analytics
-                </a> -->
             </div>
 
-            <div class="flex flex-col gap-4">
-                <p class="text-secondary text-sm">SYSTEM</p>
-                <!-- <a href="/dashboard/notifications" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-bell"></i>
-                    Notifications
-                </a> -->
-                <a href="/dashboard/users" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-users"></i>
-                    User Management
+            <div class="flex flex-col gap-1 mt-2 pt-2 border-t border-primary-200">
+                <p class="sidebar-section-text text-primary-600 text-xs font-semibold tracking-wider uppercase px-3 py-2">System</p>
+                <a href="/dashboard/users" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-users w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">User Management</span>
                 </a>
-                <a href="/dashboard/settings" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-gear"></i> 
-                    Settings
+                <a href="/dashboard/settings" class="sidebar-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-primary-900 hover:bg-primary/20 transition-all duration-200 text-sm">
+                    <i class="fa-solid fa-gear w-5 text-center opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:rotate-90 transition-all duration-200 shrink-0"></i>
+                    <span class="sidebar-link-text">Settings</span>
                 </a>
-                <form action="{{ url_for('logout') }}" method="post">
-                    <button type="submit" class="text-secondary-800 hover:text-secondary text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-right-from-bracket"></i> 
-                        Logout
+                <form action="{{ url_for('logout') }}" method="post" class="mt-2">
+                    <button type="submit" class="sidebar-link group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-700 hover:text-accent-error hover:bg-accent-error/10 transition-all duration-200 text-sm">
+                        <i class="fa-solid fa-right-from-bracket w-5 text-center opacity-80 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 shrink-0"></i>
+                        <span class="sidebar-link-text">Logout</span>
                     </button>
                 </form>
             </div>
@@ -62,8 +52,29 @@
 <script>
     const sidebar = document.querySelector('.sidebar');
     const toggleButton = document.querySelector('.toggle-button');
+    const logoText = document.querySelector('.logo-text');
+    const sidebarSectionText = document.querySelectorAll('.sidebar-section-text');
 
-    toggleButton.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
+    if (sidebar && toggleButton) {
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            logoText.classList.toggle('hidden');
+            sidebarSectionText.forEach((text) => {
+                text.classList.toggle('hidden');
+            })
+        });
+    }
+
+    // Highlight active nav link
+    document.addEventListener('DOMContentLoaded', () => {
+        const path = window.location.pathname;
+        document.querySelectorAll('.sidebar-link[href]').forEach(link => {
+            const href = link.getAttribute('href');
+            const isActive = href && (
+                (href === '/dashboard' && path === '/dashboard') ||
+                (href !== '/dashboard' && (path === href || path.startsWith(href + '/')))
+            );
+            if (isActive) link.classList.add('!text-primary-900', '!bg-primary/30');
+        });
     });
 </script>

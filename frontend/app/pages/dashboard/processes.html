@@ -1,16 +1,16 @@
 {% extends "pages/dashboard/layout.html" %}
 
 {% block dashboard_content %}
-<div class="w-full py-4 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-fit mb-4">
+<div class="w-full py-4 px-4 bg-white rounded-xl shadow-sm border border-secondary-200 h-fit mb-4">
     <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-secondary-100 font-bold text-2xl flex items-center gap-2">
+            <h1 class="text-secondary-900 font-bold text-2xl flex items-center gap-2">
                 <i class="fa-solid fa-microchip text-accent-info text-2xl"></i>
                 Process Monitoring
             </h1>
             <div class="flex items-center gap-2">
                 <form action="/dashboard/processes" method="get" class="inline">
-                    <button type="submit" class="flex items-center gap-2 px-3 py-1 bg-transparent text-secondary-200 text-sm transition">
+                    <button type="submit" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-transparent text-secondary-700 text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </form>
@@ -22,34 +22,34 @@
                     type="text" 
                     name="name"
                     value="{{ name | default('') }}"
-                    class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                    class="w-full px-4 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 text-sm transition-all duration-200"
                     placeholder="Search processes by name, command, user, or PID..."
                 >
             </div>
-            <select name="status" class="px-3 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 text-sm focus:outline-none">
+            <select name="status" class="px-3 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 text-sm focus:outline-none focus:border-primary transition-all duration-200">
                 <option value="" {% if not status %}selected{% endif %}>All Status</option>
                 <option value="normal" {% if status == 'normal' %}selected{% endif %}>Normal</option>
                 <option value="suspicious" {% if status == 'suspicious' %}selected{% endif %}>Suspicious</option>
             </select>
-            <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
+            <button type="submit" class="btn btn-interactive bg-primary text-white text-sm hover:bg-primary-600">Search</button>
         </form>
     </div>
 </div>
 
-<div class="w-full py-6 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-full">
+<div class="w-full py-6 px-4 bg-white rounded-xl shadow-sm border border-secondary-200 h-full">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-secondary-100">Active Processes ({{ pagination_data.total }})</h2>
+        <h2 class="text-xl font-bold text-secondary-900">Active Processes ({{ pagination_data.total }})</h2>
     </div>
     <div class="flex flex-col gap-4 overflow-y-auto h-[calc(100%-100px)]">
         {% if data %}
             {% for proc in data %}
-            <div class="rounded-lg border border-secondary-700 bg-secondary-900/60 p-4 flex flex-col gap-2 shadow-sm">
+            <div class="rounded-lg border border-secondary-200 bg-secondary-50 p-4 flex flex-col gap-2 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-200 card-hover">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <span class="font-bold text-secondary-100 text-base">{{ proc.name }}</span>
-                        <span class="bg-secondary-800 text-secondary-300 text-xs px-2 py-0.5 rounded font-mono">PID {{ proc.pid }}</span>
+                        <span class="font-bold text-secondary-900 text-base">{{ proc.name }}</span>
+                        <span class="bg-secondary-100 text-secondary-600 text-xs px-2 py-0.5 rounded font-mono">PID {{ proc.pid }}</span>
                         {% if proc.ppid %}
-                        <span class="bg-secondary-800 text-secondary-300 text-xs px-2 py-0.5 rounded font-mono">PPID {{ proc.ppid }}</span>
+                        <span class="bg-secondary-100 text-secondary-600 text-xs px-2 py-0.5 rounded font-mono">PPID {{ proc.ppid }}</span>
                         {% endif %}
                         {% if proc.status == 'Normal' %}
                             <span class="bg-accent-success/10 text-accent-success border border-accent-success text-xs px-2 py-0.5 rounded">Whitelisted</span>
@@ -60,52 +60,52 @@
                     <!-- <div class="flex items-center gap-2">
                         {% if proc.status == 'Suspicious' %}
                         <form action="/dashboard/processes/whitelist/{{ proc.pid }}" method="post" class="inline">
-                            <button type="submit" class="btn bg-secondary-800 border border-accent-success text-accent-success text-xs px-3 py-1">Whitelist</button>
+                            <button type="submit" class="btn bg-white border border-accent-success text-accent-success text-xs px-3 py-1">Whitelist</button>
                         </form>
                         <form action="/dashboard/processes/terminate/{{ proc.pid }}" method="post" class="inline">
                             <button type="submit" class="btn bg-accent-error/10 border border-accent-error text-accent-error text-xs px-3 py-1">Terminate</button>
                         </form>
                         {% elif proc.status == 'Normal' %}
-                        <span class="btn bg-secondary-800 border border-accent-success text-accent-success text-xs px-3 py-1 cursor-default">Whitelisted</span>
+                        <span class="btn bg-white border border-accent-success text-accent-success text-xs px-3 py-1 cursor-default">Whitelisted</span>
                         {% endif %}
                     </div> -->
                 </div>
-                <div class="text-secondary-400 text-xs font-mono mb-1 p-2 bg-secondary-700 rounded-lg">
+                <div class="text-secondary-500 text-xs font-mono mb-1 p-2 bg-secondary-100 rounded-lg break-words">
                     {{ proc.path }}
                 </div>
-                <div class="grid grid-cols-4 max-md:grid-cols-2 max-sm:grid-cols-1 text-sm text-secondary-200">
+                <div class="grid grid-cols-4 max-md:grid-cols-2 max-sm:grid-cols-1 text-sm text-secondary-700">
                     <div>
-                        <span class="text-secondary-400">
+                        <span class="text-secondary-500">
                             <i class="fa-solid fa-user mr-1"></i>User:
                         </span>
-                        <span class="text-secondary-100">{{ proc.user }}</span>
+                        <span class="text-secondary-900">{{ proc.user }}</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">
+                        <span class="text-secondary-500">
                             <i class="fa-solid fa-microchip mr-1"></i>CPU:
                         </span>
-                        <span class="text-secondary-100">{{ proc.cpu }}% CPU</span>
+                        <span class="text-secondary-900">{{ proc.cpu }}% CPU</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">
+                        <span class="text-secondary-500">
                             <i class="fa-solid fa-memory mr-1"></i>RAM:
                         </span>
-                        <span class="text-secondary-100">{{ proc.memory }} MB</span>
+                        <span class="text-secondary-900">{{ proc.memory }} MB</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">
+                        <span class="text-secondary-500">
                             <i class="fa-solid fa-clock mr-1"></i>Uptime:
                         </span>
-                        <span class="text-secondary-100">Up {{ proc.uptime }}</span>
+                        <span class="text-secondary-900">Up {{ proc.uptime }}</span>
                     </div>
                 </div>
-                <div class="text-xs text-secondary mt-1 p-2 border-t border-secondary">
+                <div class="text-xs text-secondary mt-1 p-2 border-t border-secondary-200">
                     Started: {{ proc.start_time }}
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <p class="text-secondary-400 text-lg text-center">No active processes</p>
+            <p class="text-secondary-500 text-lg text-center">No active processes</p>
         {% endif %}
     </div>
     {% if data %}

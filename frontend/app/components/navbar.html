@@ -1,4 +1,4 @@
-<nav class="navbar nav-padding bg-secondary-900 border-b border-secondary-800 flex items-center justify-between relative">
+<nav class="navbar nav-padding bg-white/95 backdrop-blur-sm border-b border-secondary-200 flex items-center justify-between relative shadow-sm">
     <div class="flex items-center w-full">
         {% include "components/logo.html" %}
 
@@ -6,20 +6,20 @@
         <div class="hidden md:flex items-center gap-6 ml-8 flex-1 justify-end">
             {% if request.state.current_user %}
             <a href="{{ url_for('dashboard') }}"
-               class="btn bg-transparent text-primary border border-primary">
+               class="btn btn-interactive bg-transparent text-primary border border-primary hover:bg-primary/10 hover:border-primary/80">
                 Dashboard
             </a>
             {% else %}
             <a href="/"
-               class="text-secondary-100">
+               class="text-secondary-700 hover:text-primary transition-colors duration-200">
                 Home
             </a>
-            <a href="#"
-               class="text-secondary-100">
+            <!-- <a href="#"
+               class="text-secondary-100 hover:text-primary transition-colors duration-200">
                 Documentation
-            </a>
+            </a> -->
             <a href="{{ url_for('login') }}"
-               class="btn bg-transparent text-primary border border-primary">
+               class="btn btn-interactive bg-transparent text-primary border border-primary hover:bg-primary/10 hover:border-primary/80">
                 Admin Login
             </a>
             {% endif %}
@@ -27,34 +27,34 @@
 
         <!-- Mobile Hamburger -->
         <div class="md:hidden flex items-center ml-auto">
-            <button class="hamburger block focus:outline-none">
-                <i class="fa fa-bars text-2xl text-secondary-100"></i>
+            <button class="hamburger block focus:outline-none p-2 rounded-lg hover:bg-secondary-100 transition-colors duration-200">
+                <i class="fa fa-bars text-2xl text-secondary-700"></i>
             </button>
-            <button class="cancel hidden ml-4 focus:outline-none">
-                <i class="fa fa-times text-2xl text-secondary-100"></i>
+            <button class="cancel hidden ml-2 focus:outline-none p-2 rounded-lg hover:bg-secondary-100 transition-colors duration-200">
+                <i class="fa fa-times text-2xl text-secondary-700"></i>
             </button>
         </div>
     </div>
 
     <!-- Mobile Nav (moved under logo) -->
-    <div class="mobile-nav w-full bg-secondary-900 bg-opacity-95 z-50 flex flex-col items-start justify-start gap-4 hidden md:hidden absolute left-0 top-full">
+    <div class="mobile-nav w-full bg-white/98 backdrop-blur-sm z-50 flex flex-col items-start justify-start gap-4 hidden md:hidden absolute left-0 top-full border-t border-secondary-200 shadow-lg">
         <div class="px-[40px] py-[20px] flex flex-col gap-2">
             {% if request.state.current_user %}
             <a href="{{ url_for('dashboard') }}"
-               class="btn bg-transparent text-primary border border-primary">
+               class="btn bg-transparent text-primary border border-primary hover:bg-primary/10 rounded-lg transition-all duration-200">
                 Dashboard
             </a>
             {% else %}
             <a href="/"
-               class="text-secondary-100">
+               class="text-secondary-700 hover:text-primary transition-colors duration-200 py-2">
                 Home
             </a>
             <a href="#"
-               class="text-secondary-100">
+               class="text-secondary-700 hover:text-primary transition-colors duration-200 py-2">
                 Documentation
             </a>
             <a href="{{ url_for('login') }}"
-               class="btn bg-transparent text-primary border border-primary">
+               class="btn bg-transparent text-primary border border-primary hover:bg-primary/10 rounded-lg transition-all duration-200">
                 Admin Login
             </a>
             {% endif %}

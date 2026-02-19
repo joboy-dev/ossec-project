@@ -69,7 +69,7 @@
           * These are also defined as CSS custom properties.
           */
         --bg-gradient-radial: radial-gradient(var(--tw-gradient-stops));
-        --bg-cyber-grid: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+        --bg-cyber-grid: linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
         /*
           * Custom Animations & Keyframes
           * Keyframes are defined with a standard @keyframes block.
@@ -119,7 +119,7 @@
       }
 
       ::-webkit-scrollbar-track {
-        @apply bg-secondary pl-4;
+        @apply bg-secondary-100 pl-4;
       }
 
       ::-webkit-scrollbar-thumb {
@@ -155,15 +155,114 @@
       .btn {
         @apply px-4 py-2 rounded-md font-bold text-center;
       }
+
+      /* Interactive UI utilities */
+      .btn-interactive {
+        @apply transition-all duration-200 ease-out;
+      }
+      .btn-interactive:hover {
+        @apply scale-[1.02] shadow-lg;
+      }
+      .btn-interactive:active {
+        @apply scale-[0.98];
+      }
+
+      .card-hover {
+        @apply transition-all duration-300 ease-out;
+      }
+      .card-hover:hover {
+        @apply shadow-xl shadow-primary/5 -translate-y-0.5 border-primary/30;
+      }
+
+      .link-hover {
+        @apply transition-colors duration-200;
+      }
+
+      .input-focus {
+        @apply transition-all duration-200;
+      }
+      .input-focus:focus {
+        @apply ring-2 ring-primary/30;
+      }
+
+      /* Modal entrance animation */
+      @keyframes modal-fade-in {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .modal-animate {
+        animation: modal-fade-in 0.2s ease-out;
+      }
+
+      /* Flash message slide-in */
+      @keyframes flash-slide-in {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .flash-animate {
+        animation: flash-slide-in 0.3s ease-out;
+      }
+
+      /* Subtle progress bar fill animation */
+      @keyframes progress-fill {
+        from {
+          width: 0;
+        }
+      }
+      .progress-animated {
+        animation: progress-fill 0.8s ease-out;
+      }
+
+      /* Sidebar collapsed state */
+      .sidebar.collapsed {
+        width: 5rem;
+      }
+      .sidebar-link-text {
+        transition: width 0.2s ease, opacity 0.2s ease;
+      }
+      .sidebar.collapsed .sidebar-link-text {
+        overflow: hidden;
+        width: 0;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      .sidebar.collapsed .sidebar-link {
+        justify-content: center;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      .sidebar.collapsed .toggle-button i {
+        transform: rotate(180deg);
+      }
+      .sidebar.collapsed p.sidebar-section-text {
+        overflow: hidden;
+        width: 0;
+        opacity: 0;
+        padding: 0;
+        margin: 0;
+        font-size: 0;
+      }
     </style>
 </head>
 
-<body class="relative">
+<body class="relative bg-secondary-50 text-secondary-900">
     {% include "components/flash_message.html" %}
 
-    <div id="modal-overlay" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
-      <div id="modal" class="bg-secondary-800 rounded-lg shadow-lg p-8 w-[60%] max-md:w-[95%] border-2 border-secondary-700 relative">
-        <button id="modal-close" class="absolute top-3 right-3 text-secondary-400 hover:text-secondary-100 text-2xl">
+    <div id="modal-overlay" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center hidden backdrop-blur-sm transition-opacity duration-200">
+      <div id="modal" class="bg-white rounded-xl shadow-2xl p-8 w-[60%] max-md:w-[95%] border border-secondary-200 relative modal-animate">
+        <button id="modal-close" class="absolute top-3 right-3 text-secondary-500 hover:text-secondary-900 hover:bg-secondary-100 rounded-lg p-1.5 transition-all duration-200 text-2xl">
           &times;
         </button>
         <div id="modal-body">
@@ -175,7 +274,12 @@
     <script>
       // Simple modal open/close logic
       function openModal(contentHtml) {
-        document.getElementById('modal-overlay').classList.remove('hidden');
+        const overlay = document.getElementById('modal-overlay');
+        const modal = document.getElementById('modal');
+        overlay.classList.remove('hidden');
+        modal.classList.remove('modal-animate');
+        void modal.offsetWidth; // Trigger reflow
+        modal.classList.add('modal-animate');
       }
       function closeModal() {
         document.getElementById('modal-overlay').classList.add('hidden');

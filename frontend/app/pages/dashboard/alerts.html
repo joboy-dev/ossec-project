@@ -7,21 +7,21 @@
 {% endblock %}
 
 {% block dashboard_content %}
-<div class="w-full py-4 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-fit mb-4">
+<div class="w-full py-4 px-4 bg-white rounded-xl border border-secondary-200 shadow-sm h-fit mb-4">
     <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-warning text-accent-warning text-2xl"></i>
-                <h1 class="text-secondary-100 font-bold text-2xl">Alert Management</h1>
+                <h1 class="text-secondary-900 font-bold text-2xl">Alert Management</h1>
             </div>
             <div class="flex items-center gap-4">
                 <form action="/dashboard/alerts" method="get">
-                    <button type="submit" class="flex items-center gap-2 px-3 py-1 bg-transparent text-secondary-200 text-sm transition">
+                    <button type="submit" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-transparent text-secondary-600 text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </form>
                 <form action="/dashboard/sync-alerts" method="post">
-                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded bg-primary text-secondary-900 text-sm font-semibold shadow hover:bg-primary/90 transition border border-primary">
+                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold shadow hover:bg-primary-600 hover:shadow-lg transition-all duration-200 border border-primary btn-interactive">
                         <i class="fa-solid fa-arrows-rotate"></i>
                         <span>Sync Alerts</span>
                     </button>
@@ -34,23 +34,23 @@
                     type="text" 
                     name="q"
                     value="{{ q | default('') }}"
-                    class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                    class="w-full px-4 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 text-sm transition-all duration-200"
                     placeholder="Search alerts by description, hostname, rule ID, or user..."
                 >
             </div>
-            <select name="severity" class="px-3 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 text-sm focus:outline-none" onchange="this.form.submit()">
+            <select name="severity" class="px-3 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 text-sm focus:outline-none focus:border-primary transition-all duration-200" onchange="this.form.submit()">
                 <option value="" {% if not severity %}selected{% endif %}>All Severities</option>
                 <option value="info" {% if severity == 'info' %}selected{% endif %}>Info</option>
                 <option value="moderate" {% if severity == 'moderate' %}selected{% endif %}>Moderate</option>
                 <option value="high" {% if severity == 'high' %}selected{% endif %}>High</option>
                 <option value="critical" {% if severity == 'critical' %}selected{% endif %}>Critical</option>
             </select>
-            <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
+            <button type="submit" class="btn btn-interactive bg-primary text-secondary-900 text-sm hover:bg-primary-400">Search</button>
         </form>
     </div>
 </div>
-<div class="w-full py-6 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-full">
-    <h2 class="text-xl font-bold text-secondary-100 mb-4">Alerts ({{ pagination_data.total }})</h2>
+<div class="w-full py-6 px-4 bg-white rounded-xl border border-secondary-200 shadow-sm h-full">
+    <h2 class="text-xl font-bold text-secondary-900 mb-4">Alerts ({{ pagination_data.total }})</h2>
 
     <div class="flex flex-col gap-4 overflow-y-auto h-[calc(100%-100px)]">
         {% if data %}
@@ -83,16 +83,16 @@
                 {% set icon_color = "text-secondary-400" %}
             {% endif %}
 
-            <div class="flex items-start space-x-3 p-4 rounded-lg border {{ bg }} {{ border }} max-md:flex-col max-md:space-x-0 max-md:space-y-2">
+            <div class="flex items-start space-x-3 p-4 rounded-lg border {{ bg }} {{ border }} max-md:flex-col max-md:space-x-0 max-md:space-y-2 hover:shadow-lg hover:border-opacity-80 transition-all duration-200 cursor-pointer">
                 <i class="fa-solid {{ icon }} text-xl {{ icon_color }} flex-shrink-0"></i>
                 <div class="flex-1 min-w-0 w-full">
                     <div class="flex items-center justify-between mb-2 max-md:flex-col max-md:items-start max-md:gap-1">
-                        <h4 class="text-slate-100 font-medium break-words">{{ alert.description }}</h4>
+                        <h4 class="text-secondary-900 font-medium break-words">{{ alert.description }}</h4>
                         <div class="flex items-center space-x-2 max-md:mt-1">
                             <span class="inline-block px-2 py-1 rounded border text-xs border-current {{ icon_color }}">
                                 Level {{ alert.level }}
                             </span>
-                            <span class="inline-block px-2 py-1 rounded bg-secondary-700 text-xs text-secondary-200">
+                            <span class="inline-block px-2 py-1 rounded bg-secondary-100 text-xs text-secondary-700">
                                 Rule {{ alert.rule_id }}
                             </span>
                             <span 
@@ -111,7 +111,7 @@
                                     "timestamp": {{ alert.timestamp|string|tojson|safe }}
                                 }'
                                 onclick="showAlertModal(this)"
-                                class="inline-block px-2 py-1 rounded bg-secondary-700 text-xs text-secondary-200 hover:bg-secondary-200 hover:text-secondary-700 cursor-pointer"
+                                class="inline-block px-2 py-1 rounded bg-secondary-100 text-xs text-secondary-700 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all duration-200 cursor-pointer border border-transparent"
                                 title="View details"
                             >
                                 <i class="fa fa-eye"></i>
@@ -119,24 +119,24 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-4 gap-2 text-sm text-slate-400 mb-2 max-md:grid-cols-2 max-sm:grid-cols-1">
+                    <div class="grid grid-cols-4 gap-2 text-sm text-secondary-500 mb-2 max-md:grid-cols-2 max-sm:grid-cols-1">
                         <div>
-                            Host: <span class="text-slate-300 break-all">{{ alert.hostname }}</span>
+                            Host: <span class="text-secondary-700 break-all">{{ alert.hostname }}</span>
                         </div>
                         <div>
-                            IP: <span class="text-slate-300 break-all">{{ alert.device_ip }}</span>
+                            IP: <span class="text-secondary-700 break-all">{{ alert.device_ip }}</span>
                         </div>
                         {% if alert.user %}
                         <div>
-                            User: <span class="text-slate-300 break-all">{{ alert.user }}</span>
+                            User: <span class="text-secondary-700 break-all">{{ alert.user }}</span>
                         </div>
                         {% endif %}
                         <div>
-                            Log: <span class="text-slate-300 break-all">{{ alert.log_file_path }}</span>
+                            Log: <span class="text-secondary-700 break-all">{{ alert.log_file_path }}</span>
                         </div>
                     </div>
 
-                    <div class="text-xs text-slate-500 bg-slate-800/50 p-2 rounded font-mono break-words">
+                    <div class="text-xs text-secondary-600 bg-secondary-100 p-2 rounded font-mono break-words">
                         {% if alert.log and alert.log|length > 150 %}
                             {{ alert.log[:150] }}...
                         {% else %}
@@ -145,8 +145,8 @@
                     </div>
 
                     <div class="flex items-center justify-between mt-2 max-md:flex-col max-md:items-start max-md:gap-1">
-                        <span class="text-slate-500 text-xs">{{ alert.level_meaning }}</span>
-                        <span class="text-slate-500 text-xs flex items-center">
+                        <span class="text-secondary-500 text-xs">{{ alert.level_meaning }}</span>
+                        <span class="text-secondary-500 text-xs flex items-center">
                             <i class="fa-regular fa-clock h-3 w-3 mr-1"></i>
                             {{ alert.timestamp }}
                         </span>
@@ -155,7 +155,7 @@
             </div>
             {% endfor %}
         {% else %}
-        <p class="text-secondary-400 text-lg text-center">No recent alerts</p>
+        <p class="text-secondary-500 text-lg text-center">No recent alerts</p>
         {% endif %}
     </div>
     {% if data %}
@@ -173,29 +173,29 @@ function showAlertModal(el) {
     }
     let html = `
         <div class="space-y-6">
-            <h2 class="text-lg font-bold text-secondary-100">Alert Details</h2>
+            <h2 class="text-lg font-bold text-secondary-900">Alert Details</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Alert Information -->
                 <div>
-                    <h3 class="text-secondary-300 text-sm font-semibold mb-2">Alert Information</h3>
+                    <h3 class="text-secondary-600 text-sm font-semibold mb-2">Alert Information</h3>
                     <div class="flex flex-col gap-2 text-xs">
                         <div>
-                            <span class="text-secondary-400">Alert ID:</span>
-                            <span class="text-secondary-100 font-mono ml-1">${alert.unique_id || ''}</span>
+                            <span class="text-secondary-500">Alert ID:</span>
+                            <span class="text-secondary-900 font-mono ml-1">${alert.unique_id || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">Rule ID:</span>
-                            <span class="text-secondary-100 font-mono ml-1">${alert.rule_id || ''}</span>
+                            <span class="text-secondary-500">Rule ID:</span>
+                            <span class="text-secondary-900 font-mono ml-1">${alert.rule_id || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">Level:</span>
+                            <span class="text-secondary-500">Level:</span>
                             <span class="inline-block px-2 py-1 rounded text-xs ml-1
                                 ${
                                     alert.level_text && alert.level_text.toLowerCase() === 'critical' ? 'bg-accent-error/10 text-accent-error border border-accent-error' :
                                     alert.level_text && alert.level_text.toLowerCase() === 'high' ? 'bg-orange-900/10 text-orange-400 border border-orange-500' :
                                     alert.level_text && alert.level_text.toLowerCase() === 'moderate' ? 'bg-accent-warning/10 text-accent-warning border border-accent-warning' :
                                     alert.level_text && alert.level_text.toLowerCase() === 'info' ? 'bg-accent-info/10 text-accent-info border border-accent-info' :
-                                    'bg-secondary-800 text-secondary-200 border border-secondary-700'
+                                    'bg-secondary-100 text-secondary-700 border border-secondary-200'
                                 }"
                             >
                                 ${alert.level ? alert.level : ''}
@@ -203,42 +203,42 @@ function showAlertModal(el) {
                             </span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">Description:</span>
-                            <span class="text-secondary-100 ml-1">${alert.description || ''}</span>
+                            <span class="text-secondary-500">Description:</span>
+                            <span class="text-secondary-900 ml-1">${alert.description || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">Timestamp:</span>
-                            <span class="text-secondary-100 ml-1">${alert.timestamp || ''}</span>
+                            <span class="text-secondary-500">Timestamp:</span>
+                            <span class="text-secondary-900 ml-1">${alert.timestamp || ''}</span>
                         </div>
                     </div>
                 </div>
                 <!-- System Information -->
                 <div>
-                    <h3 class="text-secondary-300 text-sm font-semibold mb-2">System Information</h3>
+                    <h3 class="text-secondary-600 text-sm font-semibold mb-2">System Information</h3>
                     <div class="flex flex-col gap-2 text-xs">
                         <div>
-                            <span class="text-secondary-400">Hostname:</span>
-                            <span class="text-secondary-100 ml-1">${alert.hostname || ''}</span>
+                            <span class="text-secondary-500">Hostname:</span>
+                            <span class="text-secondary-900 ml-1">${alert.hostname || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">IP Address:</span>
-                            <span class="text-secondary-100 ml-1">${alert.device_ip || ''}</span>
+                            <span class="text-secondary-500">IP Address:</span>
+                            <span class="text-secondary-900 ml-1">${alert.device_ip || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">User:</span>
-                            <span class="text-secondary-100 ml-1">${alert.user || ''}</span>
+                            <span class="text-secondary-500">User:</span>
+                            <span class="text-secondary-900 ml-1">${alert.user || ''}</span>
                         </div>
                         <div>
-                            <span class="text-secondary-400">Log File:</span>
-                            <span class="text-secondary-100 ml-1">${alert.log_file_path || ''}</span>
+                            <span class="text-secondary-500">Log File:</span>
+                            <span class="text-secondary-900 ml-1">${alert.log_file_path || ''}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <!-- Raw Log Data -->
             <div>
-                <h3 class="text-secondary-300 text-sm font-semibold mb-2">Raw Log Data</h3>
-                <div class="text-xs text-slate-200 bg-slate-800/80 p-2 rounded font-mono break-words border border-secondary-700">
+                <h3 class="text-secondary-600 text-sm font-semibold mb-2">Raw Log Data</h3>
+                <div class="text-xs text-secondary-700 bg-secondary-100 p-2 rounded font-mono break-words border border-secondary-200">
                     ${alert.log || ''}
                 </div>
             </div>

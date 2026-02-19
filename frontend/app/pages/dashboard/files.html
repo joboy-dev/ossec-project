@@ -1,21 +1,21 @@
 {% extends "pages/dashboard/layout.html" %}
 
 {% block dashboard_content %}
-<div class="w-full py-4 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-fit mb-4">
+<div class="w-full py-4 px-4 bg-white rounded-xl shadow-sm border border-secondary-200 h-fit mb-4">
     <div class="flex flex-col gap-3">
         <div class="flex items-center justify-between mb-2">
-            <h1 class="text-secondary-100 font-bold text-2xl flex items-center gap-2">
+            <h1 class="text-secondary-900 font-bold text-2xl flex items-center gap-2">
                 <i class="fa-solid fa-file-shield text-accent-info text-2xl"></i>
                 File Integrity Monitoring
             </h1>
             <div class="flex items-center gap-2">
                 <form action="/dashboard/files" method="get" class="inline">
-                    <button type="submit" class="flex items-center gap-2 px-3 py-1 bg-transparent text-secondary-200 text-sm transition">
+                    <button type="submit" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-transparent text-secondary-600 text-sm hover:bg-primary/10 hover:text-primary transition-all duration-200">
                         <i class="fa-solid fa-rotate-right"></i>
                     </button>
                 </form>
                 <form action="/dashboard/sync-files" method="post">
-                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded bg-primary text-secondary-900 text-sm font-semibold shadow hover:bg-primary/90 transition border border-primary">
+                    <button type="submit" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold shadow hover:bg-primary-600 hover:shadow-lg transition-all duration-200 border border-primary btn-interactive">
                         <i class="fa-solid fa-arrows-rotate"></i>
                         <span>Sync FIles</span>
                     </button>
@@ -28,28 +28,28 @@
                     type="text" 
                     name="path"
                     value="{{ path | default('') }}"
-                    class="w-full px-4 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 focus:outline-none focus:border-primary text-sm"
+                    class="w-full px-4 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30 text-sm transition-all duration-200"
                     placeholder="Search files by path"
                 >
             </div>
-            <select name="status" class="px-3 py-2 rounded bg-secondary-900 text-secondary-200 border border-secondary-700 text-sm focus:outline-none">
+            <select name="status" class="px-3 py-2 rounded-lg bg-white text-secondary-900 border border-secondary-300 text-sm focus:outline-none focus:border-primary transition-all duration-200">
                 <option value="" {% if not status %}selected{% endif %}>All Status</option>
                 <option value="normal" {% if status == 'normal' %}selected{% endif %}>Normal</option>
                 <option value="suspicious" {% if status == 'suspicious' %}selected{% endif %}>Suspicious</option>
             </select>
-            <button type="submit" class="btn bg-primary text-secondary-900 text-sm">Search</button>
+            <button type="submit" class="btn btn-interactive bg-primary text-white text-sm hover:bg-primary-600">Search</button>
         </form>
     </div>
 </div>
 
-<div class="w-full py-6 px-4 bg-secondary-800 rounded-lg border-2 border-secondary-700 h-full">
+<div class="w-full py-6 px-4 bg-white rounded-xl shadow-sm border border-secondary-200 h-full">
     <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-secondary-100">Monitored files ({{ pagination_data.total }})</h2>
+        <h2 class="text-xl font-bold text-secondary-900">Monitored files ({{ pagination_data.total }})</h2>
     </div>
     <div class="flex flex-col gap-4 overflow-y-auto h-[calc(100%-100px)]">
         {% if data %}
             {% for file in data %}
-            <div class="rounded-lg border border-secondary-700 bg-secondary-900/60 p-4 flex flex-col gap-2 shadow-sm">
+            <div class="rounded-lg border border-secondary-200 bg-secondary-50 p-4 flex flex-col gap-2 shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-200 card-hover">
                 <div class="flex items-center gap-2 mb-1">
                     {% if file.status|lower == 'verified' %}
                         <i class="fa-solid fa-circle-check text-accent-success"></i>
@@ -62,9 +62,9 @@
                     {% elif file.status|lower == 'integrity error' %}
                         <i class="fa-solid fa-triangle-exclamation text-accent-error"></i>
                     {% else %}
-                        <i class="fa-solid fa-file-alt text-secondary-400"></i>
+                        <i class="fa-solid fa-file-alt text-secondary-500"></i>
                     {% endif %}
-                    <span class="font-mono text-secondary-100 text-base">{{ file.path }}</span>
+                    <span class="font-mono text-secondary-900 text-base">{{ file.path }}</span>
                     {% if file.status|lower == 'verified' %}
                         <span class="ml-2 px-2 py-0.5 rounded text-xs bg-accent-success/10 text-accent-success border border-accent-success">Verified</span>
                     {% elif file.status|lower == 'modified' %}
@@ -79,36 +79,36 @@
                 </div>
                 <div class="flex flex-wrap gap-6 text-xs text-secondary-300 font-mono mb-1">
                     <div>
-                        <span class="text-secondary-400">Size:</span>
-                        <span class="text-secondary-100">{{ file.size }}</span>
+                        <span class="text-secondary-500">Size:</span>
+                        <span class="text-secondary-900">{{ file.size }}</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">Permissions:</span>
-                        <span class="text-secondary-100">{{ file.permissions }}</span>
+                        <span class="text-secondary-500">Permissions:</span>
+                        <span class="text-secondary-900">{{ file.permissions }}</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">Last Modified:</span>
-                        <span class="text-secondary-100">{{ file.last_modified }}</span>
+                        <span class="text-secondary-500">Last Modified:</span>
+                        <span class="text-secondary-900">{{ file.last_modified }}</span>
                     </div>
                 </div>
-                <div class="flex flex-col gap-1 text-xs text-secondary-300 font-mono bg-secondary-800 rounded p-2">
+                <div class="flex flex-col gap-1 text-xs text-secondary-300 font-mono bg-white rounded p-2">
                     <div>
-                        <span class="text-secondary-400">Current:</span>
-                        <span class="text-secondary-100 break-all">{{ file.current }}</span>
+                        <span class="text-secondary-500">Current:</span>
+                        <span class="text-secondary-900 break-all">{{ file.current }}</span>
                     </div>
                     <div>
-                        <span class="text-secondary-400">Baseline:</span>
-                        <span class="text-secondary-100 break-all">{{ file.baseline }}</span>
+                        <span class="text-secondary-500">Baseline:</span>
+                        <span class="text-secondary-900 break-all">{{ file.baseline }}</span>
                     </div>
                 </div>
-                <div class="text-xs text-secondary-400 mt-1 pl-1">
+                <div class="text-xs text-secondary-500 mt-1 pl-1">
                     <i class="fa-regular fa-clock mr-1"></i>
                     Last checked: {{ file.last_checked }}
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <p class="text-secondary-400 text-lg text-center">No monitored files found </p>
+            <p class="text-secondary-500 text-lg text-center">No monitored files found </p>
         {% endif %}
     </div>
     {% if data %}

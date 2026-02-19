@@ -23,13 +23,13 @@
         {% if pagination_data.previous_page %}
         <li>
             <a href="{{ page_url(pagination_data.current_page - 1) }}" aria-label="Previous"
-               class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
+               class="px-3 py-1 rounded-lg bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200 max-sm:px-2 max-sm:text-base">
                 <span aria-hidden="true">&laquo;</span>
             </a>
         </li>
         {% else %}
         <li>
-            <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 cursor-not-allowed max-sm:px-2 max-sm:text-base">&laquo;</span>
+            <span class="px-3 py-1 rounded-lg bg-secondary-100 text-secondary-400 cursor-not-allowed max-sm:px-2 max-sm:text-base">&laquo;</span>
         </li>
         {% endif %}
 
@@ -37,11 +37,11 @@
             {% for i in range(1, pagination_data.pages + 1) %}
             <li class="max-sm:hidden sm:inline">
                 <a href="{{ page_url(i) }}"
-                   class="px-3 py-1 rounded-md transition
+                   class="px-3 py-1 rounded-lg transition
                    {% if i == pagination_data.current_page %}
-                       bg-accent-info text-white font-bold
+                       bg-primary text-white font-bold
                    {% else %}
-                       bg-secondary-700 text-secondary-200 hover:bg-secondary-600
+                       bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary
                    {% endif %}
                    max-sm:px-2 max-sm:text-base">
                     {{ i }}
@@ -50,17 +50,17 @@
             {% endfor %}
             <!-- On small screens, show only current page -->
             <li class="sm:hidden">
-                <span class="px-3 py-1 rounded-md bg-accent-info text-white font-bold max-sm:px-2 max-sm:text-base">
+                <span class="px-3 py-1 rounded-lg bg-primary text-white font-bold max-sm:px-2 max-sm:text-base">
                     {{ pagination_data.current_page }}
                 </span>
             </li>
         {% else %}
             {% if pagination_data.current_page > 4 %}
                 <li class="max-sm:hidden sm:inline">
-                    <a href="{{ page_url(1) }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">1</a>
+                    <a href="{{ page_url(1) }}" class="px-3 py-1 rounded-lg bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary transition max-sm:px-2 max-sm:text-base">1</a>
                 </li>
                 <li class="max-sm:hidden sm:inline">
-                    <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
+                    <span class="px-3 py-1 rounded-lg bg-secondary-100 text-secondary-400 max-sm:px-2 max-sm:text-base">...</span>
                 </li>
             {% endif %}
             {% set start = pagination_data.current_page - 2 if pagination_data.current_page - 2 > 1 else 1 %}
@@ -68,11 +68,11 @@
             {% for i in range(start, end + 1) %}
             <li class="max-sm:hidden sm:inline">
                 <a href="{{ page_url(i) }}"
-                   class="px-3 py-1 rounded-md transition
+                   class="px-3 py-1 rounded-lg transition
                    {% if i == pagination_data.current_page %}
-                       bg-accent-info text-white font-bold
+                       bg-primary text-white font-bold
                    {% else %}
-                       bg-secondary-700 text-secondary-200 hover:bg-secondary-600
+                       bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary
                    {% endif %}
                    max-sm:px-2 max-sm:text-base">
                     {{ i }}
@@ -81,15 +81,15 @@
             {% endfor %}
             {% if end < pagination_data.pages %}
                 <li class="max-sm:hidden sm:inline">
-                    <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 max-sm:px-2 max-sm:text-base">...</span>
+                    <span class="px-3 py-1 rounded-lg bg-secondary-100 text-secondary-400 max-sm:px-2 max-sm:text-base">...</span>
                 </li>
                 <li class="max-sm:hidden sm:inline">
-                    <a href="{{ page_url(pagination_data.pages) }}" class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">{{ pagination_data.pages }}</a>
+                    <a href="{{ page_url(pagination_data.pages) }}" class="px-3 py-1 rounded-lg bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary transition max-sm:px-2 max-sm:text-base">{{ pagination_data.pages }}</a>
                 </li>
             {% endif %}
             <!-- On small screens, show only current page -->
             <li class="sm:hidden">
-                <span class="px-3 py-1 rounded-md bg-accent-info text-white font-bold max-sm:px-2 max-sm:text-base">
+                <span class="px-3 py-1 rounded-lg bg-primary text-white font-bold max-sm:px-2 max-sm:text-base">
                     {{ pagination_data.current_page }}
                 </span>
             </li>
@@ -98,13 +98,13 @@
         {% if pagination_data.next_page %}
         <li>
             <a href="{{ page_url(pagination_data.current_page + 1) }}" aria-label="Next"
-               class="px-3 py-1 rounded-md bg-secondary-700 text-secondary-200 hover:bg-secondary-600 transition max-sm:px-2 max-sm:text-base">
+               class="px-3 py-1 rounded-lg bg-white border border-secondary-200 text-secondary-700 hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200 max-sm:px-2 max-sm:text-base">
                 <span aria-hidden="true">&raquo;</span>
             </a>
         </li>
         {% else %}
         <li>
-            <span class="px-3 py-1 rounded-md bg-secondary-800 text-secondary-500 cursor-not-allowed max-sm:px-2 max-sm:text-base">&raquo;</span>
+            <span class="px-3 py-1 rounded-lg bg-secondary-100 text-secondary-400 cursor-not-allowed max-sm:px-2 max-sm:text-base">&raquo;</span>
         </li>
         {% endif %}
     </ul>

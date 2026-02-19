@@ -139,7 +139,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         ]
         self.protected_routes = [
             "/dashboard", "/dashboard/alerts",
-            "/dashboard/processes", "/dashboard/notifications",
+            "/dashboard/processes", "/dashboard/files",
             "/dashboard/users", "/dashboard/settings",
         ]
 
