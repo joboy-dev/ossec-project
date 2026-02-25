@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from decouple import config
 
-from api.core.dependencies.email_sending_service import send_email
+# from api.core.dependencies.email_sending_service import send_email
 from api.core.dependencies.flash_messages import MessageCategory, flash
 from api.utils.loggers import create_logger
 from api.utils.telex_notification import TelexNotification
