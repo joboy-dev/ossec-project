@@ -3,6 +3,7 @@ from fastapi import APIRouter, BackgroundTasks, Cookie, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 import psutil
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from decouple import config
 
 from api.core.dependencies.context import add_template_context
@@ -95,12 +96,22 @@ async def alerts(
     severity: str = None,
     db: Session=Depends(get_db),
 ):
+    search_expr = None
+    if q and q.strip():
+        term = q.strip()
+        search_expr = or_(
+            Alert.description.ilike(f"%{term}%"),
+            Alert.hostname.ilike(f"%{term}%"),
+            Alert.rule_id.ilike(f"%{term}%"),
+            Alert.user.ilike(f"%{term}%"),
+        )
+
     _, alerts, count = Alert.fetch_by_field(
         db=db, 
         page=page,
         per_page=per_page,
         sort_by='timestamp',
-        search_fields={'description': q if q != "" else None,},
+        filter_expr=search_expr,
         level_text=severity if severity != "" else None
     )
     
@@ -119,15 +130,22 @@ async def processes(
     request: Request, 
     page: int = 1,
     per_page: int = 20,
-    name: str = None,
+    q: str = None,
     status: str = None,
 ):
     total_processes = len(psutil.pids())
     skip = (page - 1) * per_page
     all_processes = SystemResourceService.get_processes_info(limit=per_page, skip=skip)
     
-    if name:
-        all_processes = [proc for proc in all_processes if name.lower() in proc.get("name", "").lower()]
+    if q and q.strip():
+        term = q.strip().lower()
+        all_processes = [
+            proc for proc in all_processes
+            if term in proc.get("name", "").lower()
+            or term in proc.get("path", "").lower()
+            or term in proc.get("user", "").lower()
+            or term in str(proc.get("pid", "")).lower()
+        ]
     if status:
         all_processes = [proc for proc in all_processes if proc.get("status", "").lower() == status.lower()]
         
