@@ -1,3 +1,4 @@
+import tempfile
 import time
 # from datetime import time
 import os
@@ -35,6 +36,32 @@ class OssecService:
             "ossec-monitord": "Monitor Daemon"
         }
         
+    def _read_config(self, config_path: str) -> ET.ElementTree:
+        """Read the OSSEC config file using sudo to avoid permission errors."""
+        result = subprocess.run(
+            ["sudo", "cat", config_path],
+            capture_output=True, text=True
+        )
+        if result.returncode != 0:
+            raise PermissionError(f"Failed to read {config_path}: {result.stderr.strip()}")
+        root = ET.fromstring(result.stdout)
+        return ET.ElementTree(root)
+
+    def _write_config(self, tree: ET.ElementTree, config_path: str):
+        """Write the OSSEC config file using sudo to avoid permission errors."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".conf", delete=False) as tmp:
+            tree.write(tmp.name, xml_declaration=True)
+            tmp_path = tmp.name
+        try:
+            result = subprocess.run(
+                ["sudo", "cp", tmp_path, config_path],
+                capture_output=True, text=True
+            )
+            if result.returncode != 0:
+                raise PermissionError(f"Failed to write {config_path}: {result.stderr.strip()}")
+        finally:
+            os.unlink(tmp_path)
+
     def format_ossec_process_name(self, service_name: str):
         """Get the name of the Ossec service"""
         
@@ -136,10 +163,9 @@ class OssecService:
         Create a backup copy of the ossec.conf file.
         If backup_path is not provided, appends '.bak' to config_path.
         """
-        import shutil
         if backup_path is None:
             backup_path = config_path + ".bak"
-        shutil.copy2(config_path, backup_path)
+        subprocess.run(["sudo", "cp", config_path, backup_path], capture_output=True, text=True)
         logger.info(f"Backup of ossec.conf created at {backup_path}")
         return backup_path
     
@@ -228,7 +254,7 @@ class OssecService:
         return files, total
         
     def get_monitored_paths(self, config_path: str="/var/ossec/etc/ossec.conf"):
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
 
         namespaces = {"ossec": root.tag.split("}")[0].strip("{")} if "}" in root.tag else {}
@@ -244,7 +270,7 @@ class OssecService:
     def add_monitored_path(self, new_path: str, config_path: str="/var/ossec/etc/ossec.conf"):
         self.backup_ossec_config()
         
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         
         syscheck = root.find(".//syscheck")
@@ -260,7 +286,7 @@ class OssecService:
             dirs.add(new_path)
             directories.text = ",".join(sorted(dirs))
         
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         
         # Restart OSSEC
         self.restart_ossec()
@@ -268,7 +294,7 @@ class OssecService:
     def remove_monitored_path(self, path: str, config_path: str = "/var/ossec/etc/ossec.conf"):
         """Remove a path from monitored directories."""
         self.backup_ossec_config()
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         syscheck = root.find(".//syscheck")
         if syscheck is None:
@@ -281,7 +307,7 @@ class OssecService:
                 if not dirs:
                     syscheck.remove(directories)
                 break
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         self.restart_ossec()
         
     def update_monitored_path_attribute(
@@ -296,7 +322,7 @@ class OssecService:
         If the attribute does not exist, it will be created.
         """
         self.backup_ossec_config()
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         syscheck = root.find(".//syscheck")
         if syscheck is None:
@@ -315,12 +341,12 @@ class OssecService:
             new_elem = ET.SubElement(syscheck, "directories")
             new_elem.text = path
             new_elem.set(attr, value)
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         self.restart_ossec()
         
     def get_ignored_paths(self, config_path: str="/var/ossec/etc/ossec.conf"):
         
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
 
         namespaces = {"ossec": root.tag.split("}")[0].strip("{")} if "}" in root.tag else {}
@@ -336,7 +362,7 @@ class OssecService:
     def add_ignored_path(self, new_path: str, config_path: str="/var/ossec/etc/ossec.conf"):
         self.backup_ossec_config()
         
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         
         syscheck = root.find(".//syscheck")
@@ -352,7 +378,7 @@ class OssecService:
             dirs.add(new_path)
             ignore.text = ",".join(sorted(dirs))
         
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         
         # Restart OSSEC
         self.restart_ossec()
@@ -360,7 +386,7 @@ class OssecService:
     def remove_ignored_path(self, path: str, config_path: str = "/var/ossec/etc/ossec.conf"):
         """Remove a path from ignored directories."""
         self.backup_ossec_config()
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         syscheck = root.find(".//syscheck")
         if syscheck is None:
@@ -373,7 +399,7 @@ class OssecService:
                 if not dirs:
                     syscheck.remove(ignore)
                 break
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         self.restart_ossec()
     
     def set_syscheck_tag(self, tag: str, value: str, config_path: str = "/var/ossec/etc/ossec.conf"):
@@ -381,7 +407,7 @@ class OssecService:
         Add or update a syscheck child tag (frequency, scan_time, scan_day, auto_ignore, alert_new_files, scan_on_start, skip_nfs).
         """
         self.backup_ossec_config(config_path)
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         syscheck = root.find(".//syscheck")
         if syscheck is None:
@@ -390,14 +416,14 @@ class OssecService:
         if tag_elem is None:
             tag_elem = ET.SubElement(syscheck, tag)
         tag_elem.text = str(value)
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         self.restart_ossec()
 
     def get_syscheck_tag(self, tag: str, config_path: str = "/var/ossec/etc/ossec.conf"):
         """
         Get the value of a syscheck child tag.
         """
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         syscheck = root.find(".//syscheck")
         if syscheck is not None:
@@ -411,7 +437,7 @@ class OssecService:
         Add or update a tag in the <global> section of ossec.conf.
         """
         self.backup_ossec_config(config_path)
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         global_elem = root.find(".//global")
         if global_elem is None:
@@ -420,12 +446,12 @@ class OssecService:
         if tag_elem is None:
             tag_elem = ET.SubElement(global_elem, tag)
         tag_elem.text = str(value)
-        tree.write(config_path)
+        self._write_config(tree, config_path)
         self.restart_ossec()
 
     def get_global_tag(self, tag: str, config_path: str = "/var/ossec/etc/ossec.conf"):
         """Get the value of a tag in the <global> section."""
-        tree = ET.parse(config_path)
+        tree = self._read_config(config_path)
         root = tree.getroot()
         global_elem = root.find(".//global")
         if global_elem is not None:
